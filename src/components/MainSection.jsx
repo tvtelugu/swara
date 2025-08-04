@@ -90,16 +90,75 @@ const MainSection = () => {
       }
     };
 
-    const fetchArtistData = async () => {
-      try {
-        const artist = await artistData;
-        setArtists(artist.results);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+    const allTeluguArtists = [
+  { name: 'S.P. Balasubrahmanyam', id: '741999' },
+  { name: 'Ilaiyaraaja', id: '457536' },
+  { name: 'Mano', id: '455270' },
+  { name: 'Devi Sri Prasad', id: '455170' },
+  { name: 'A.R. Rahman', id: '456269' },
+  { name: 'Chakri', id: '455307' },
+  { name: 'Shankar Mahadevan', id: '455275' },
+  { name: 'Thaman S', id: '544471' },
+  { name: 'Sid Sriram', id: '689580' },
+  { name: 'Anirudh Ravichander', id: '455663' },
+  { name: 'M. M. Keeravani', id: '813721' },
+  { name: 'Raj-Koti', id: '458338' },
+  { name: 'S.P.B. Charan', id: '509181' },
+  { name: 'Ghantasala', id: '458406' },
+  { name: 'P. Susheela', id: '566970' },
+  { name: 'S. Janaki', id: '455844' },
+  { name: 'V. Harikrishna', id: '544525' },
+  { name: 'Shreya Ghoshal', id: '455130' },
+  { name: 'Vijai Bulganin', id: '3518493' },
+  { name: 'Sreerama Chandra', id: '1477338' },
+  { name: 'Mickey J Meyer', id: '455233' },
+  { name: 'Anurag Kulkarni', id: '2545800' },
+  { name: 'Yuvan Shankar Raja', id: '456091' },
+  { name: 'Vivek-Sagar', id: '824250' },
+  { name: 'Mangli', id: '544381' },
+  { name: 'Ramya Behara', id: '531654' },
+  { name: 'R.P. Patnaik', id: '455555' },
+  { name: 'Ramana Gogula', id: '461295' },
+  { name: 'Sai Kartheek', id: '459934' },
+  { name: 'K. S. Chithra', id: '483224' }
+];
+
+const setArtists = (artists) => {
+  console.log('Artists set successfully:', artists);
+  // This is where you would typically update your component's state
+  // e.g., setArtists(artists);
+};
+
+const setError = (error) => {
+  console.error('An error occurred:', error);
+  // This is where you would typically set an error state
+  // e.g., setError(error);
+};
+
+const setLoading = (isLoading) => {
+  console.log('Loading state:', isLoading);
+  // This is where you would typically set a loading state
+  // e.g., setLoading(isLoading);
+};
+
+// The function is now a simple, synchronous one since the data is local.
+// We'll call it fetchArtistData to keep the original name.
+const fetchArtistData = () => {
+  try {
+    // The data is already available, so we just wrap it in a 'results' object
+    // to match the original structure from the `artistData` response.
+    const artistData = { results: allTeluguArtists }; 
+    setArtists(artistData.results);
+  } catch (err) {
+    // In a real-world scenario, this might catch an error if `allTeluguArtists` was malformed
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
+// Call the function to simulate the fetch and process
+fetchArtistData();
 
     const fetchPlaylistData = async () => {
       try {
