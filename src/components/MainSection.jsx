@@ -59,7 +59,7 @@ const MainSection = () => {
   useEffect(() => {
     const fetchSongData = async () => {
       try {
-        const song = await fetchplaylistsByID(110858205);
+        const song = await fetchplaylistsByID(1222048287);
         setTrending(song.data.songs);
       } catch (err) {
         setError(err.message);
@@ -70,7 +70,7 @@ const MainSection = () => {
 
     const fetchlatestSongData = async () => {
       try {
-        const latestSongs = await fetchplaylistsByID(6689255);
+        const latestSongs = await fetchplaylistsByID(1219444539);
         setlatestSongs(latestSongs.data.songs);
       } catch (err) {
         setError(err.message);
