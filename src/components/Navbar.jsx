@@ -141,7 +141,7 @@ const Navbar = () => {
             <span className="bg"></span>
             <div className="flex items-center">
               <img
-                src="https://raw.githubusercontent.com/tvtelugu/swara/refs/heads/main/public/Black_musify.png"
+                src="https://raw.githubusercontent.com/tvtelugu/swara/refs/heads/main/public/swara.png"
                 alt="Swara Logo"
                 className="h-10 w-auto mr-2"
               />
