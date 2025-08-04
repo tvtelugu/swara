@@ -3,26 +3,26 @@
 export const genreData = {
     "For You": [
     {
-        "id": "1134543272",
-        "name": "Hindi: India Superhits Top 50",
+        "id": "1134643225",
+        "name": "Telugu: India Superhits Top 50",
         "type": "playlist",
         "image": [
           {
             "quality": "50x50",
-            "url": "https://c.saavncdn.com/editorial/Hindi-IndiaSuperhitsTop50_20250131013815_50x50.jpg"
+            "url": "https://c.saavncdn.com/editorial/Telugu-IndiaSuperhitsTop50_20250724200934_50x50.jpg"
           },
           {
             "quality": "150x150",
-            "url": "https://c.saavncdn.com/editorial/Hindi-IndiaSuperhitsTop50_20250131013815_150x150.jpg"
+            "url": "https://c.saavncdn.com/editorial/Telugu-IndiaSuperhitsTop50_20250724200934_150x150.jpg"
           },
           {
             "quality": "500x500",
-            "url": "https://c.saavncdn.com/editorial/Hindi-IndiaSuperhitsTop50_20250131013815_500x500.jpg"
+            "url": "https://c.saavncdn.com/editorial/Telugu-IndiaSuperhitsTop50_20250724200934_500x500.jpg"
           }
         ],
-        "url": "https://www.jiosaavn.com/featured/hindi-india-superhits-top-50/zlJfJYVuyjpxWb5,FqsjKg__",
+        "url": "https://www.jiosaavn.com/featured/telugu%3A-india-superhits-top-50/4O6DwO-qteN613W6L-cCSw__",
         "songCount": 50,
-        "language": "hindi",
+        "language": "telugu",
         "explicitContent": false
       },
       {
