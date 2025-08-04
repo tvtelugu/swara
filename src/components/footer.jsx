@@ -1,42 +1,55 @@
-import { Link } from "react-router";
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
+  // New list of top artists as requested.
+  const topArtists = [
+    { name: 'S.P. Balasubrahmanyam', id: '741999' },
+    { name: 'Ilaiyaraaja', id: '457536' },
+    { name: 'Mano', id: '455270' },
+    { name: 'Devi Sri Prasad', id: '455170' },
+    { name: 'A.R. Rahman', id: '456269' },
+    { name: 'Chakri', id: '455307' },
+    { name: 'Shankar Mahadevan', id: '455275' },
+    { name: 'Thaman S', id: '544471' },
+  ];
+
   return (
-    <>
-    <div className=" lg:h-[15rem] h-auto w-full flex gap-10  p-10 footer mb-[3rem]">
-      <div className="ml-[4rem] flex flex-col ">
-        <div className="flex items-center ml-[-10px]">
-        <span className="bg"></span>
-        <div className="gap-1">
-          <span className="Musi  font-extrabold text-2xl lg:text-3xl ">Musi</span>
-          <span className="fy font-extrabold text-2xl lg:text-3xl ">fy</span>
+    <footer className="bg-gray-900 text-gray-400 py-12 px-6 lg:px-24">
+      <div className="container mx-auto flex flex-col md:flex-row justify-between items-start md:items-center">
+        {/* Top Artists section */}
+        <div className="mb-8 md:mb-0">
+          <h4 className="text-white text-lg font-bold mb-4">TOP ARTISTS</h4>
+          <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-2 gap-2">
+            {topArtists.map((artist) => (
+              <li key={artist.id}>
+                <Link 
+                  to={`/artists/${artist.id}`} 
+                  className="text-sm hover:text-white transition-colors duration-300"
+                >
+                  {artist.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
+        
+        {/* Footer info section */}
+        <div className="text-center md:text-right">
+          <p className="text-sm">
+            © 𝟐𝟎𝟐𝟒 || Sɯαɾα™ Made with ❤️ by{' '}
+            <a 
+              href="https://t.me/tvtelugu" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-white hover:underline font-bold"
+            >
+              𝐌𝐚𝐝𝐡𝐮
+            </a>
+          </p>
         </div>
-
-        <div >
-        <div>
-            <pre className="lg:text-sm text-xs">Made with ReactJS by Harsh. </pre>
-        <ul className="flex gap-4 ">
-            <li><a href="https://github.com/itz-Harsh/Musify.git" className="hover:underline text-[13px] lg:text-[15px]" target=" "><pre>Source Code</pre></a></li>
-            <li><a href="https://www.instagram.com/_harsh_str/" className="hover:underline text-[13px] lg:text-[15px]" target=" "><pre>Instagram</pre></a></li>
-
-        </ul>
-        </div></div>
       </div>
-
-      <div className="lg:block hidden">
-        <ul className="flex flex-col gap-[0.2rem] pb-5">
-          <p className=" font-sans text-xs font-semibold pb-2">TOP ARTISTS</p>
-        <li><Link to={`/artists/459320`} >Arijit Singh</Link> </li>
-        <li><Link to={`/artists/456863`} >Badshah</Link> </li>
-        <li><Link to={`/artists/485956`} >Honey Singh </Link> </li>
-        <li><Link to={`/artists/468245`} >Diljit Dosanjh </Link> </li>
-        <li><Link to={`/artists/672167`} >Haardy Sandhu </Link> </li>
-        <li><Link to={`/artists/881158`} >Jubin Nautiyal</Link> </li></ul>
-    </div>
-    </div>
-
-</>
+    </footer>
   );
 };
 
