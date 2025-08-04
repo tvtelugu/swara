@@ -1,55 +1,19 @@
-import { useEffect, useState, useRef } from "react";
-import {
-  MdOutlineKeyboardArrowLeft,
-  MdOutlineKeyboardArrowRight,
-} from "react-icons/md";
-// NOTE: These fetch functions and other components are assumed to be
-// imported from their respective files, as they are not included in this single script.
+import {  useEffect, useState } from "react";
 import {
   fetchplaylistsByID,
   searchAlbumByQuery,
   searchPlayListByQuery,
-} from "../../fetch";
+} from "../../fetch"; // Assuming the function is imported correctly
 import AlbumSlider from "./Sliders/AlbumSlider";
 import PlaylistSlider from "./Sliders/PlaylistSlider";
 import ArtistSlider from "./Sliders/ArtistSlider";
 import SongGrid from "./SongGrid";
-
-// The artistData object has been moved directly into this file
-const artistData = {
-  results: [
-    { name: 'S.P. Balasubrahmanyam', id: '741999' },
-    { name: 'Ilaiyaraaja', id: '457536' },
-    { name: 'Mano', id: '455270' },
-    { name: 'Devi Sri Prasad', id: '455170' },
-    { name: 'A.R. Rahman', id: '456269' },
-    { name: 'Chakri', id: '455307' },
-    { name: 'Shankar Mahadevan', id: '455275' },
-    { name: 'Thaman S', id: '544471' },
-    { name: 'Sid Sriram', id: '689580' },
-    { name: 'Anirudh Ravichander', id: '455663' },
-    { name: 'M. M. Keeravani', id: '813721' },
-    { name: 'Raj-Koti', id: '458338' },
-    { name: 'S.P.B. Charan', id: '509181' },
-    { name: 'Ghantasala', id: '458406' },
-    { name: 'P. Susheela', id: '566970' },
-    { name: 'S. Janaki', id: '455844' },
-    { name: 'V. Harikrishna', id: '544525' },
-    { name: 'Shreya Ghoshal', id: '455130' },
-    { name: 'Vijai Bulganin', id: '3518493' },
-    { name: 'Sreerama Chandra', id: '1477338' },
-    { name: 'Mickey J Meyer', id: '455233' },
-    { name: 'Anurag Kulkarni', id: '2545800' },
-    { name: 'Yuvan Shankar Raja', id: '456091' },
-    { name: 'Vivek-Sagar', id: '824250' },
-    { name: 'Mangli', id: '544381' },
-    { name: 'Ramya Behara', id: '531654' },
-    { name: 'R.P. Patnaik', id: '455555' },
-    { name: 'Ramana Gogula', id: '461295' },
-    { name: 'Sai Kartheek', id: '459934' },
-    { name: 'K. S. Chithra', id: '483224' }
-  ],
-};
+import { useRef } from "react";
+import {
+  MdOutlineKeyboardArrowLeft,
+  MdOutlineKeyboardArrowRight,
+} from "react-icons/md";
+import { artistData } from "../genreData";
 
 const MainSection = () => {
   const [trending, setTrending] = useState([]);
@@ -59,7 +23,7 @@ const MainSection = () => {
   const [playlists, setPlaylists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [list, setList] = useState({});
+  const [list , setList ] = useState({});
   const latestSongsScrollRef = useRef(null);
   const songsScrollRef = useRef(null);
   const scrollRef = useRef(null);
@@ -128,7 +92,8 @@ const MainSection = () => {
 
     const fetchArtistData = async () => {
       try {
-        setArtists(artistData.results);
+        const artist = await artistData;
+        setArtists(artist.results);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -156,72 +121,81 @@ const MainSection = () => {
 
   useEffect(() => {
     // Combine arrays and remove duplicates
-    const combineArray = [...recentlyPlayedSongs, ...trending, ...latestSongs];
-    const uniqueSongs = combineArray.filter(
-      (song, index, self) => index === self.findIndex((t) => t.id === song.id)
+    const combineArray = [
+      ...recentlyPlayedSongs,
+      ...trending,
+      ...latestSongs
+    ];
+    const uniqueSongs = combineArray.filter((song, index, self) => 
+      index === self.findIndex((t) => (
+        t.id === song.id
+      ))
     );
-
+  
     setList(uniqueSongs);
-  }, [trending, latestSongs]);
+  }, [trending , latestSongs ]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
+
+
   return (
     <div className="pt-[3rem] lg:pt-5 my-[2rem] mt-[5rem] lg:my-[4rem] flex flex-col items-center overflow-x-clip gap-[0.3rem]">
-      <div className="hidden lg:block text-2xl w-full font-semibold lg:ml-[5.5rem] m-1">
-        {getGreeting()}
-      </div>
+      <div className="hidden lg:block text-2xl w-full  font-semibold lg:ml-[5.5rem] m-1">
+            {getGreeting()}
+          </div>
       {recentlyPlayedSongs.length > 0 && (
         <div className="flex flex-col justify-center items-center w-full">
-          <h2 className=" m-4 mt-0 text-xl lg:text-2xl font-semibold w-full ml-[3.5rem] lg:ml-[6.5rem]">
-            Recently Played
-          </h2>
-          <div className="flex justify-center items-center gap-3 w-full scroll-smooth">
-            {/* Left Arrow */}
-            <MdOutlineKeyboardArrowLeft
-              className="text-3xl hover:scale-125 cursor-pointer h-[9rem] arrow-btn hidden lg:block "
-              onClick={() => scrollLeft(scrollRef)}
-            />
-            <div
-              className="grid grid-rows-1 grid-flow-col justify-start overflow-x-scroll scroll-hide items-center gap-3 lg:gap-2 w-full px-3 lg:px-0 scroll-smooth"
-              ref={scrollRef}
-            >
-              {recentlyPlayedSongs?.map((song, index) => (
-                <SongGrid key={song.id || index} {...song} song={list} />
-              ))}
-            </div>
-            {/* Right Arrow */}
-            <MdOutlineKeyboardArrowRight
-              className="text-3xl hover:scale-125 transition-all duration-200 ease-in-out cursor-pointer h-[9rem] arrow-btn hidden lg:block "
-              onClick={() => scrollRight(scrollRef)}
-            />
+        <h2 className=" m-4 mt-0 text-xl lg:text-2xl font-semibold  w-full ml-[3.5rem] lg:ml-[6.5rem]">
+          Recently Played
+        </h2>
+        <div className="flex justify-center items-center gap-3 w-full scroll-smooth">
+          {/* Left Arrow */}
+          <MdOutlineKeyboardArrowLeft
+            className="text-3xl hover:scale-125 cursor-pointer h-[9rem] arrow-btn  hidden lg:block  "
+            onClick={() => scrollLeft(scrollRef)}
+          />
+          <div
+            className="grid grid-rows-1  grid-flow-col justify-start overflow-x-scroll scroll-hide items-center gap-3 lg:gap-2 w-full  px-3 lg:px-0 scroll-smooth"
+            ref={scrollRef}
+          >
+            {recentlyPlayedSongs?.map((song, index) => (
+              <SongGrid key={song.id || index} {...song} song={list}/>
+            ))}
           </div>
+          {/* Right Arrow */}
+          <MdOutlineKeyboardArrowRight
+            className="text-3xl hover:scale-125 transition-all duration-200 ease-in-out cursor-pointer h-[9rem] arrow-btn  hidden lg:block  "
+            onClick={() => scrollRight(scrollRef)}
+          />
         </div>
+      </div>
       )}
+      
 
       <div className="flex flex-col items-center w-full">
-        <h2 className=" m-4 text-xl lg:text-2xl font-semibold w-full ml-[3.5rem] lg:ml-[6.5rem]">
+        <h2 className=" m-4 text-xl lg:text-2xl font-semibold  w-full ml-[3.5rem] lg:ml-[6.5rem]">
           New Songs
         </h2>
 
         <div className="flex justify-center items-center gap-3 w-full">
           {/* Left Arrow */}
           <MdOutlineKeyboardArrowLeft
-            className="text-3xl hover:scale-125 transition-all duration-200 ease-in-out cursor-pointer h-[9rem] arrow-btn hidden lg:block "
+            className="text-3xl hover:scale-125 transition-all duration-200 ease-in-out cursor-pointer h-[9rem] arrow-btn hidden lg:block  "
             onClick={() => scrollLeft(latestSongsScrollRef)}
           />
           <div
             className="grid grid-rows-1 lg:grid-rows-2 grid-flow-col justify-start overflow-x-scroll scroll-hide items-center gap-3 lg:gap-2 w-full px-3 lg:px-0 scroll-smooth"
             ref={latestSongsScrollRef}
           >
-            {latestSongs?.map((song, index) => (
-              <SongGrid key={song.id || index} {...song} song={list} />
+            {latestSongs?.map((song , index) => (
+              <SongGrid key={song.id || index } {...song} song={list}/>
             ))}
           </div>
           {/* Right Arrow */}
           <MdOutlineKeyboardArrowRight
-            className="text-3xl hover:scale-125 transition-all duration-200 ease-in-out cursor-pointer h-[9rem] arrow-btn hidden lg:block "
+            className="text-3xl hover:scale-125 transition-all duration-200 ease-in-out cursor-pointer h-[9rem] arrow-btn hidden lg:block  "
             onClick={() => scrollRight(latestSongsScrollRef)}
           />
         </div>
@@ -231,26 +205,26 @@ const MainSection = () => {
 
       {/* Today Trending Section */}
       <div className="flex flex-col justify-center items-center w-full">
-        <h2 className=" m-4 mt-0 text-xl lg:text-2xl font-semibold w-full ml-[3.5rem] lg:ml-[6.5rem]">
+        <h2 className=" m-4 mt-0 text-xl lg:text-2xl font-semibold  w-full ml-[3.5rem] lg:ml-[6.5rem]">
           Today Trending
         </h2>
         <div className="flex justify-center items-center gap-3 w-full">
           {/* Left Arrow */}
           <MdOutlineKeyboardArrowLeft
-            className="text-3xl hover:scale-125 transition-all duration-200 ease-in-out cursor-pointer h-[9rem] arrow-btn hidden lg:block "
+            className="text-3xl hover:scale-125 transition-all duration-200 ease-in-out cursor-pointer h-[9rem] arrow-btn hidden lg:block  "
             onClick={() => scrollLeft(songsScrollRef)}
           />
           <div
-            className="grid grid-rows-1 sm:grid-rows-2 grid-flow-col justify-start overflow-x-scroll scroll-hide items-center gap-3 lg:gap-2 w-full px-3 lg:px-0 scroll-smooth"
+            className="grid grid-rows-1 sm:grid-rows-2 grid-flow-col justify-start overflow-x-scroll scroll-hide items-center gap-3 lg:gap-2 w-full  px-3 lg:px-0 scroll-smooth"
             ref={songsScrollRef}
           >
             {trending?.map((song) => (
-              <SongGrid key={song.id} {...song} song={list} />
+              <SongGrid key={song.id} {...song} song={list}/>
             ))}
           </div>
           {/* Right Arrow */}
           <MdOutlineKeyboardArrowRight
-            className="text-3xl hover:scale-125 transition-all duration-200 ease-in-out cursor-pointer h-[9rem] arrow-btn hidden lg:block "
+            className="text-3xl hover:scale-125 transition-all duration-200 ease-in-out cursor-pointer h-[9rem] arrow-btn  hidden lg:block  "
             onClick={() => scrollRight(songsScrollRef)}
           />
         </div>
@@ -260,7 +234,7 @@ const MainSection = () => {
 
       {/* Top Albums Section */}
       <div className="w-full">
-        <h2 className=" m-4 mt-0 text-xl lg:text-2xl font-semibold w-full ml-[1rem] lg:ml-[3rem] ">
+        <h2 className=" m-4 mt-0 text-xl lg:text-2xl font-semibold  w-full ml-[1rem] lg:ml-[3rem] ">
           Top Albums
         </h2>
         <AlbumSlider albums={albums} />
@@ -269,7 +243,7 @@ const MainSection = () => {
 
       {/* Top Artists Section */}
       <div className="w-full">
-        <h2 className="pr-1 m-4 mt-0 text-xl lg:text-2xl font-semibold w-full ml-[1rem] lg:ml-[3.5rem] ">
+        <h2 className="pr-1 m-4 mt-0 text-xl lg:text-2xl font-semibold  w-full ml-[1rem] lg:ml-[3.5rem] ">
           Top Artists
         </h2>
         <ArtistSlider artists={artists} />
@@ -278,7 +252,7 @@ const MainSection = () => {
 
       {/* Top Playlists Section */}
       <div className="w-full flex flex-col gap-3">
-        <h2 className=" m-1 text-xl lg:text-2xl font-semibold w-full ml-[1rem] lg:ml-[2.8rem] ">
+        <h2 className=" m-1 text-xl lg:text-2xl font-semibold  w-full ml-[1rem] lg:ml-[2.8rem] ">
           Top Playlists
         </h2>
         <PlaylistSlider playlists={playlists} />
