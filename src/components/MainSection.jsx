@@ -81,7 +81,7 @@ const MainSection = () => {
 
     const fetchAlbumData = async () => {
       try {
-        const album = await searchAlbumByQuery("latest");
+        const album = await searchAlbumByQuery("latest-Telugu");
         setAlbums(album.data.results);
       } catch (err) {
         setError(err.message);
@@ -103,7 +103,7 @@ const MainSection = () => {
 
     const fetchPlaylistData = async () => {
       try {
-        const playlist = await searchPlayListByQuery("Top");
+        const playlist = await searchPlayListByQuery("Top-Telugu");
         setPlaylists(playlist.data.results);
       } catch (err) {
         setError(err.message);
