@@ -130,13 +130,18 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar flex flex-col lg:gap-10 lg:flex-row lg:items-center top-0 z-20 fixed w-full pl-1 pr-1 lg:px-2   lg:h-[4.5rem]">
+      <nav className="navbar flex flex-col lg:gap-10 lg:flex-row lg:items-center top-0 z-20 fixed w-full pl-1 pr-1 lg:px-2 lg:h-[4.5rem]">
       {/* Logo */}
-      <div className="flex  items-center gap-[4rem] mb-2 lg:mb-0 w-fit">
-        <div className="flex items-center lg:gap-[4rem] lg:w-auto w-screen lg:justify-normal justify-between gap-5  h-[61px]">
-          <Link to="/" className="flex items-center ">
+      <div className="flex items-center gap-[4rem] mb-2 lg:mb-0 w-fit">
+        <div className="flex items-center lg:gap-[4rem] lg:w-auto w-screen lg:justify-normal justify-between gap-5 h-[61px]">
+          <Link to="/" className="flex items-center">
             <span className="bg"></span>
-            <div className="">
+            <div className="flex items-center"> {/* Use flexbox to align logo and text */}
+              <img 
+                src="https://raw.githubusercontent.com/tvtelugu/swara/refs/heads/main/public/Black_musify.png" 
+                alt="Swara Logo" 
+                className="h-10 w-auto mr-2" // Adjust size and add margin
+              />
               <span className="Musi text-zinc-600 font-extrabold text-2xl lg:text-3xl">
                 Sɯαɾα
               </span>
@@ -145,6 +150,9 @@ const Navbar = () => {
               </span>
             </div>
           </Link>
+        </div>
+      </div>
+    </nav>
 
           
           <Theme />
