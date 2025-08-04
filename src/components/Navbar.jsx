@@ -138,10 +138,10 @@ const Navbar = () => {
             <span className="bg"></span>
             <div className="">
               <span className="Musi text-zinc-600 font-extrabold text-2xl lg:text-3xl">
-                Musi
+                Sɯαɾα
               </span>
               <span className="fy text-zinc-200 font-extrabold text-2xl lg:text-3xl">
-                fy
+                ™
               </span>
             </div>
           </Link>
