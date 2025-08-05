@@ -250,13 +250,13 @@ const Navbar = () => {
         <Link to="/Browse">
           <button className="flex items-center gap-2 p-2">
             <FaMusic className="text-xl" />
-            <span className="font-semibold text-lg">Browse</span>
+            <span className="font-semibold text-lg"></span>
           </button>
         </Link>
         <Link to="/Music">
           <button className="flex items-center gap-2 p-2">
             <MdOutlineLibraryMusic className="text-xl" />
-            <span className="font-semibold text-lg">My Music</span>
+            <span className="font-semibold text-lg"></span>
           </button>
         </Link>
         <Theme />
