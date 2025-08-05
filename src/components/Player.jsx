@@ -37,8 +37,8 @@ const Player = () => {
   const [volume, setVolume] = useState(() => {
     return Number(localStorage.getItem("volume")) || 100;
   });
-  const [isVisible, setIsVisible] = useState(false); // For showing and hiding the player
-  const [isMaximized, setisMaximized] = useState(false); // For minimizing the player
+  const [isVisible, setIsVisible] = useState(false);
+  const [isMaximized, setisMaximized] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [detail, setDetails] = useState({});
   const [list, setList] = useState({});
@@ -72,13 +72,13 @@ const Player = () => {
   const scrollRef = useRef(null);
   const scrollLeft = (scrollRef) => {
     if (scrollRef.current) {
-      scrollRef.current.scrollLeft -= 1000; // Scroll left by 800px
+      scrollRef.current.scrollLeft -= 1000;
     }
   };
 
   const scrollRight = (scrollRef) => {
     if (scrollRef.current) {
-      scrollRef.current.scrollLeft += 1000; // Scroll right by 800px
+      scrollRef.current.scrollLeft += 1000;
     }
   };
 
@@ -94,7 +94,6 @@ const Player = () => {
     const albumDetail = async () => {
       const result = await getSongById(currentSong.id);
       setDetails(result.data[0]);
-      // console.log(detail);
     };
     if (currentSong?.id) {
       albumDetail();
@@ -103,23 +102,20 @@ const Player = () => {
 
   useEffect(() => {
     const fetchSuggestions = async () => {
-        if (!currentSong?.id) return;
-        const suggestions = await getSuggestionSong(currentSong.id);
-
-        setList(suggestions.data);
-        setSuggetion(suggestions.data);
-      
+      if (!currentSong?.id) return;
+      const suggestions = await getSuggestionSong(currentSong.id);
+      setList(suggestions.data);
+      setSuggetion(suggestions.data);
     };
 
     fetchSuggestions();
 
     if (currentSong) {
       const audioElement = currentSong.audio;
-
       audioElement.volume = volume / 100;
 
       const handleTimeUpdate = () => {
-        setCurrentTime(audioElement.currentTime); // Update currentTime state
+        setCurrentTime(audioElement.currentTime);
         const duration = Number(currentSong.duration);
         const newTiming = (audioElement.currentTime / duration) * 100;
         if (inputRef.current) {
@@ -128,8 +124,8 @@ const Player = () => {
       };
 
       const handleEndSong = () => {
-        if (!currentSong || !currentSong.id) return; // Prevents running if currentSong is missing
-        nextSong(); // Call nextSong when the current song ends
+        if (!currentSong || !currentSong.id) return;
+        nextSong();
       };
 
       audioElement.addEventListener("timeupdate", handleTimeUpdate);
@@ -147,21 +143,19 @@ const Player = () => {
     const newTime = (newPercentage / 100) * Number(currentSong.duration);
     currentSong.audio.currentTime = newTime;
     setCurrentTime(newTime);
-
-    // Update currentTime to match slider
   };
 
   const handleVolumeChange = (event) => {
     const newVolume = parseFloat(event.target.value) / 100;
     setVolume(newVolume * 100);
-    localStorage.setItem("volume", newVolume * 100); // Save volume to localStorage
+    localStorage.setItem("volume", newVolume * 100);
     if (currentSong?.audio) {
       currentSong.audio.volume = newVolume;
     }
   };
 
   const handleMaximized = () => {
-    setisMaximized(!isMaximized); // Toggle minimize state
+    setisMaximized(!isMaximized);
   };
 
   const formatTime = (time) => {
@@ -177,11 +171,10 @@ const Player = () => {
   const toggleLikeSong = () => {
     if (!currentSong) return;
 
-    // Extract only necessary properties
     const songData = {
       id: currentSong.id,
       name: currentSong.name,
-      audio: currentSong.audio.currentSrc, // Ensure this is a URL
+      audio: currentSong.audio.currentSrc,
       duration: currentSong.duration,
       image: currentSong.image,
       artists: currentSong.artists,
@@ -190,8 +183,8 @@ const Player = () => {
     const updatedLikedSongs = likedSongs.some(
       (song) => song.id === currentSong.id
     )
-      ? likedSongs.filter((song) => song.id !== currentSong.id) // Remove song if already liked
-      : [...likedSongs, songData]; // Add cleaned song data
+      ? likedSongs.filter((song) => song.id !== currentSong.id)
+      : [...likedSongs, songData];
 
     setLikedSongs(updatedLikedSongs);
     localStorage.setItem("likedSongs", JSON.stringify(updatedLikedSongs));
@@ -400,14 +393,14 @@ const Player = () => {
                     {currentSong?.qualities && (
                       <div className="relative group">
                         <button className="hover:text-[#fd3a4e] icon text-2xl cursor-pointer">
-                          {currentSong.selectedQuality}
+                          {currentSong.selectedQuality || "Quality"}
                         </button>
                         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:block z-30">
                           <div className="flex flex-col">
                             {currentSong.qualities.map((quality) => (
                               <button
                                 key={quality.quality}
-                                onClick={() => switchQuality(quality.quality)}
+                                onClick={() => switchQuality(quality.url)}
                                 className="py-1 px-2 text-left hover:bg-gray-700"
                               >
                                 {quality.quality}
@@ -498,16 +491,14 @@ const Player = () => {
                             {currentSong?.qualities && (
                               <div className="relative group">
                                 <button className="lg:hover:text-[#fd3a4e] active:text-[#fd3a4e] flex self-center text-[1.8rem] cursor-pointer icon">
-                                  {currentSong.selectedQuality}
+                                  {currentSong.selectedQuality || "Quality"}
                                 </button>
                                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:block z-30">
                                   <div className="flex flex-col">
                                     {currentSong.qualities.map((quality) => (
                                       <button
                                         key={quality.quality}
-                                        onClick={() =>
-                                          switchQuality(quality.quality)
-                                        }
+                                        onClick={() => switchQuality(quality.url)}
                                         className="py-1 px-2 text-left hover:bg-gray-700"
                                       >
                                         {quality.quality}
@@ -644,38 +635,37 @@ const Player = () => {
                   </div>
                   <div className="flex flex-col overflow-hidden  p-1">
                     <div>
-                        {suggetions.length >= 0 && (
-                          <div className="flex flex-col justify-center items-center w-full ">
-                            <h2 className="pr-1 m-4 text-xl lg:text-2xl font-semibold w-full ml-[2.5rem] lg:ml-[5.5rem] ">
-                              You Might Like
-                            </h2>
-                            <div className="flex justify-center items-center gap-3 w-full">
-                              {/* Left Arrow */}
-                               <MdOutlineKeyboardArrowLeft
-                               className="text-3xl hover:scale-125 cursor-pointer h-[9rem]    hidden lg:block arrow-btn"
-                               onClick={() => scrollLeft(scrollRef)}
-                             />
-                              <div
-                                className="grid grid-rows-1  grid-flow-col justify-start overflow-x-scroll scroll-hide items-center gap-3 lg:gap-[.35rem] w-full  px-3 lg:px-0 scroll-smooth"
-                                ref={scrollRef}
-                              >
-                                {suggetions?.map((song, index) => (
-                                  <SongGrid
-                                    key={song.id || index}
-                                    {...song}
-                                     song={list}
-                                  /> 
-                                ))}
-                              </div>
-                              {/* Right Arrow */}
-                             <MdOutlineKeyboardArrowRight
-                               className="text-3xl hover:scale-125  cursor-pointer h-[9rem] hidden lg:block arrow-btn"
-                               onClick={() => scrollRight(scrollRef)}
-                             />
-                            </div>  
+                      {suggetions.length >= 0 && (
+                        <div className="flex flex-col justify-center items-center w-full ">
+                          <h2 className="pr-1 m-4 text-xl lg:text-2xl font-semibold w-full ml-[2.5rem] lg:ml-[5.5rem] ">
+                            You Might Like
+                          </h2>
+                          <div className="flex justify-center items-center gap-3 w-full">
+                            {/* Left Arrow */}
+                            <MdOutlineKeyboardArrowLeft
+                              className="text-3xl hover:scale-125 cursor-pointer h-[9rem]    hidden lg:block arrow-btn"
+                              onClick={() => scrollLeft(scrollRef)}
+                            />
+                            <div
+                              className="grid grid-rows-1  grid-flow-col justify-start overflow-x-scroll scroll-hide items-center gap-3 lg:gap-[.35rem] w-full  px-3 lg:px-0 scroll-smooth"
+                              ref={scrollRef}
+                            >
+                              {suggetions?.map((song, index) => (
+                                <SongGrid
+                                  key={song.id || index}
+                                  {...song}
+                                  song={list}
+                                />
+                              ))}
+                            </div>
+                            {/* Right Arrow */}
+                            <MdOutlineKeyboardArrowRight
+                              className="text-3xl hover:scale-125  cursor-pointer h-[9rem] hidden lg:block arrow-btn"
+                              onClick={() => scrollRight(scrollRef)}
+                            />
                           </div>
-                        )}
-                        
+                        </div>
+                      )}
                     </div>
                     <div className="flex flex-col pt-3 ">
                       <h2 className="pr-1 text-xl lg:text-2xl font-semibold  w-full ml-[2rem] lg:ml-[3.5rem] lg:m-3 ">
