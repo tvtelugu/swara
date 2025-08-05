@@ -183,13 +183,13 @@ const Navbar = () => {
   }, [isDesktopSearchVisible]);
 
   return (
-    <nav className="navbar fixed top-0 z-20 w-full px-4 py-1 lg:px-6 lg:py-1 flex items-center justify-between transition-all duration-300 ease-in-out" style={{ backgroundColor: 'transparent' }}>
+    <nav className="navbar fixed top-0 z-20 w-full px-4 pt-0 pb-1 lg:px-6 lg:pb-1 flex items-start justify-between transition-all duration-300 ease-in-out" style={{ backgroundColor: 'transparent' }}>
       <div
-        className={`flex items-center gap-2 transition-all duration-300 ease-in-out ${
+        className={`flex items-start gap-1 transition-all duration-300 ease-in-out ${
           isSearchActive || isDesktopSearchVisible ? "opacity-0 invisible" : "opacity-100 visible"
         } lg:opacity-100 lg:visible`}
       >
-        <Link to="/" className="flex items-center gap-1">
+        <Link to="/" className="flex items-start gap-1">
           <img
             src="https://raw.githubusercontent.com/tvtelugu/swara/refs/heads/main/public/swara.png"
             alt="Swara Logo"
@@ -205,7 +205,7 @@ const Navbar = () => {
       </div>
       
       {/* Desktop Navigation Links and Theme Toggle */}
-      <div className={`hidden lg:flex items-center gap-3 grey font-semibold ml-auto transition-all duration-300 ease-in-out ${
+      <div className={`hidden lg:flex items-start gap-2 grey font-semibold ml-auto transition-all duration-300 ease-in-out ${
         isDesktopSearchVisible ? "opacity-0 invisible" : "opacity-100 visible"
       }`}>
         <button
@@ -228,7 +228,7 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Search Button */}
-      <div className="flex items-center gap-2 lg:hidden">
+      <div className="flex items-start gap-2 lg:hidden">
         <Theme />
         <button
           onClick={() => setIsSearchActive(true)}
@@ -315,7 +315,7 @@ const Navbar = () => {
             : "left-full opacity-0 invisible w-0"
         }`}
       >
-        <form onSubmit={handleSearchSubmit} className="relative flex-grow flex items-center">
+        <form onSubmit={handleSearchSubmit} className="relative flex-grow flex items-start">
           <input
             type="text"
             name="search"
