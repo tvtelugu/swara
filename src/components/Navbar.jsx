@@ -155,12 +155,12 @@ const Navbar = () => {
         <Link to="/" className="flex items-center">
           <div className="flex items-center">
             <img
-              src="https://raw.githubusercontent.com/tvtelugu/swara/refs/heads/main/public/swara.png"
+              src="https://i.ibb.co/LdnM0h7m/Picsart-25-08-06-03-47-55-834.png"
               alt="Swara Logo"
               className="h-10 w-auto mr-2"
             />
             <span className="Musi text-zinc-600 font-extrabold text-2xl lg:text-3xl">
-              Sɯαɾα
+              
             </span>
             <span className="fy text-zinc-200 font-extrabold text-2xl lg:text-3xl">
               ™
