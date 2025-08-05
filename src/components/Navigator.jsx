@@ -1,60 +1,46 @@
+import { GoHome, GoHomeFill } from "react-icons/go";
+import { IoCompass, IoCompassOutline, IoHeartOutline, IoHeartSharp } from "react-icons/io5";
 import { Link, useLocation } from "react-router-dom";
-import { useTheme } from "./context/ThemeContext";
-
-// Import a new, more visually distinct icon set (e.g., from 'react-icons/ai')
-import { AiOutlineHome, AiFillHome } from "react-icons/ai";
-import { AiOutlineCompass, AiFillCompass } from "react-icons/ai";
-import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
-
-const navItems = [
-  {
-    path: "/",
-    label: "Home",
-    icon: <AiOutlineHome className="text-2xl" />,
-    activeIcon: <AiFillHome className="text-2xl" />,
-  },
-  {
-    path: "/Browse",
-    label: "Browse",
-    icon: <AiOutlineCompass className="text-2xl" />,
-    activeIcon: <AiFillCompass className="text-2xl" />,
-  },
-  {
-    path: "/Music",
-    label: "My Music",
-    icon: <AiOutlineHeart className="text-2xl" />,
-    activeIcon: <AiFillHeart className="text-2xl" />,
-  },
-];
 
 const Navigator = () => {
   const location = useLocation();
-  const { isDarkMode } = useTheme();
 
   return (
-    <div className={`fixed bottom-0 left-0 right-0 z-20 flex justify-around items-center h-16 shadow-lg lg:hidden 
-                     ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
-      {navItems.map((item) => {
-        const isActive = location.pathname === item.path;
-        return (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={`flex flex-col items-center justify-center w-full h-full text-center transition-colors duration-300
-                        ${
-                          isActive
-                            ? "text-blue-500 dark:text-blue-400"
-                            : "text-gray-500 dark:text-gray-400"
-                        }
-                        hover:text-blue-500 hover:scale-110 dark:hover:text-blue-400`}
-          >
-            <div className="mb-1 transform transition-transform duration-300">
-              {isActive ? item.activeIcon : item.icon}
-            </div>
-            <span className="text-xs font-medium">{item.label}</span>
-          </Link>
-        );
-      })}
+    <div className="fixed bottom-0 left-0 right-0 z-20 flex justify-around items-center h-16 bg-white shadow-[0_-4px_10px_rgba(0,0,0,0.1)] lg:hidden dark:bg-gray-800 dark:shadow-[0_-4px_10px_rgba(255,255,255,0.05)]">
+      
+      <Link to="/" className="flex flex-col items-center justify-center w-full h-full text-center transition-colors duration-200">
+        <div className={`flex flex-col items-center text-xs font-medium ${location.pathname === "/" ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
+          {location.pathname === "/" ? (
+            <GoHomeFill className="text-2xl mb-1" />
+          ) : (
+            <GoHome className="text-2xl mb-1" />
+          )}
+          Home
+        </div>
+      </Link>
+
+      <Link to="/Browse" className="flex flex-col items-center justify-center w-full h-full text-center transition-colors duration-200">
+        <div className={`flex flex-col items-center text-xs font-medium ${location.pathname === "/Browse" ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
+          {location.pathname === "/Browse" ? (
+            <IoCompass className="text-2xl mb-1" />
+          ) : (
+            <IoCompassOutline className="text-2xl mb-1" />
+          )}
+          Browse
+        </div>
+      </Link>
+      
+      <Link to="/Music" className="flex flex-col items-center justify-center w-full h-full text-center transition-colors duration-200">
+        <div className={`flex flex-col items-center text-xs font-medium ${location.pathname === "/Music" ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
+          {location.pathname === "/Music" ? (
+            <IoHeartSharp className="text-2xl mb-1" />
+          ) : (
+            <IoHeartOutline className="text-2xl mb-1" />
+          )}
+          My Music
+        </div>
+      </Link>
+      
     </div>
   );
 };
