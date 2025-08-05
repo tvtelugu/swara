@@ -248,13 +248,13 @@ const Navbar = () => {
       {/* Desktop: Browse, My Music, and Theme Switch */}
       <div className="hidden lg:flex items-center justify-end lg:basis-1/4 gap-5">
         <Link to="/Browse">
-          <button className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-700 transition-colors duration-200">
+          <button className="flex items-center gap-2 p-2">
             <FaMusic className="text-xl" />
             <span className="font-semibold text-lg">Browse</span>
           </button>
         </Link>
         <Link to="/Music">
-          <button className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-700 transition-colors duration-200">
+          <button className="flex items-center gap-2 p-2">
             <MdOutlineLibraryMusic className="text-xl" />
             <span className="font-semibold text-lg">My Music</span>
           </button>
