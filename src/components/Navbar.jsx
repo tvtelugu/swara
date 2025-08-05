@@ -170,7 +170,8 @@ const Navbar = () => {
         isDesktopSearchVisible &&
         searchInputRef.current &&
         !searchInputRef.current.contains(event.target) &&
-        !event.target.closest(".search-btn-desktop")
+        !event.target.closest(".search-btn-desktop") &&
+        !event.target.closest(".search-btn")
       ) {
         closeDesktopSearch();
       }
@@ -221,7 +222,7 @@ const Navbar = () => {
           <IoMusicalNotesOutline className="text-xl" />
           <h2 className="text-base">My Music</h2>
         </Link>
-        <div className="search-btn p-2 rounded-full">
+        <div className="p-1 rounded-full">
           <Theme />
         </div>
       </div>
@@ -320,7 +321,7 @@ const Navbar = () => {
             name="search"
             id="search-desktop"
             placeholder="Search for Songs, Artists, and Playlists"
-            className="flex-grow h-10 p-1 pl-6 pr-10 rounded-full focus:outline-none search-input text-base"
+            className="flex-grow h-10 p-1 pl-6 pr-10 rounded-full focus:outline-none search-input text-base text-zinc-400"
             value={query}
             onChange={handleSearchInputChange}
             autoComplete="off"
@@ -331,14 +332,14 @@ const Navbar = () => {
             <button
               type="button"
               onClick={closeDesktopSearch}
-              className="search-btn-desktop absolute right-10 h-full w-10 rounded-r-full flex items-center justify-center"
+              className="search-btn-desktop absolute right-10 h-full w-10 flex items-center justify-center"
             >
               <IoCloseOutline className="text-xl search" />
             </button>
           )}
           <button
             type="submit"
-            className={`search-btn absolute h-full w-10 rounded-r-full flex items-center justify-center ${isDesktopSearchVisible ? 'right-0' : 'right-10'}`}
+            className="search-btn absolute right-0 h-full w-10 rounded-r-full flex items-center justify-center"
           >
             <IoSearchOutline className="text-xl search" />
           </button>
