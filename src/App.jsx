@@ -12,7 +12,7 @@ import he from "he";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-import { ThemeProvider } from "./context/ThemeContext"; // Import ThemeProvider
+import { ThemeProvider } from "./context/ThemeContext";
 
 export default function App() {
   const [songs, setSongs] = useState([null]);
@@ -21,7 +21,7 @@ export default function App() {
   const [currentSong, setCurrentSong] = useState(null);
   const [shuffle, setShuffle] = useState(false);
   const [repeatMode, setRepeatMode] = useState("none");
-  const [showSuccessPopup, setShowSuccessPopup] = useState(false); // State for success popup
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   const playMusic = async (
     downloadUrl,
@@ -76,34 +76,31 @@ export default function App() {
       playedSongs = playedSongs.slice(0, 20);
     }
 
-    // Save the updated list back to localStorage
     localStorage.setItem("playedSongs", JSON.stringify(playedSongs));
   };
 
   const downloadSong = async () => {
     if (currentSong?.audio?.currentSrc) {
       try {
-        const response = await fetch(currentSong.audio.currentSrc); // Fetch the audio file
-        const blob = await response.blob(); // Convert the response to a Blob object
+        const response = await fetch(currentSong.audio.currentSrc);
+        const blob = await response.blob();
 
         const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob); // Create an object URL from the Blob
+        link.href = URL.createObjectURL(blob);
         link.download = `${
           currentSong?.name ? he.decode(currentSong.name) : "Empty"
-        }.mp3`; // Set the download filename
+        }.mp3`;
 
         document.body.appendChild(link);
-        link.click(); // Trigger the download
+        link.click();
         document.body.removeChild(link);
 
-        // Revoke the object URL to release memory
         URL.revokeObjectURL(link.href);
 
-        // Show success popup
         setShowSuccessPopup(true);
         setTimeout(() => {
           setShowSuccessPopup(false);
-        }, 3000); // Hide after 3 seconds
+        }, 3000);
       } catch (error) {
         console.error("Error downloading the song:", error);
         alert("Failed to download the song!");
@@ -118,7 +115,7 @@ export default function App() {
       const currentIndex = songs.findIndex(
         (song) => song?.id === currentSong.id
       );
-      if (currentIndex === -1) return; // Ensure currentIndex is valid
+      if (currentIndex === -1) return;
 
       if (shuffle) {
         const randomIndex = Math.floor(Math.random() * songs.length);
@@ -184,7 +181,7 @@ export default function App() {
   };
 
   return (
-    <ThemeProvider> {/* Wrap the entire application with ThemeProvider */}
+    <ThemeProvider>
       <SpeedInsights />
       <Analytics />
       <MusicContext.Provider
