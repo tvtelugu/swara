@@ -8,14 +8,14 @@ const Navigator = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
-    // Check for the 'dark' class on the body element when the component mounts
+    // Check for the 'dark' class on the body element on mount
     const checkTheme = () => {
       setIsDarkMode(document.body.classList.contains('dark'));
     };
 
     checkTheme();
 
-    // Create a MutationObserver to listen for changes to the body's class list
+    // Create a MutationObserver to watch for changes to the body's class list
     const observer = new MutationObserver(checkTheme);
     observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
 
