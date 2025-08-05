@@ -157,7 +157,7 @@ const Navbar = () => {
       setSuggestions([]);
     }
   };
-  
+    
   const closeDesktopSearch = () => {
     setIsDesktopSearchVisible(false);
     setQuery("");
@@ -183,29 +183,29 @@ const Navbar = () => {
   }, [isDesktopSearchVisible]);
 
   return (
-    <nav className="navbar fixed top-0 z-20 w-full px-4 py-2 lg:px-6 lg:py-2 flex items-center justify-between transition-all duration-300 ease-in-out">
+    <nav className="navbar fixed top-0 z-20 w-full px-4 py-1 lg:px-6 lg:py-1 flex items-center justify-between transition-all duration-300 ease-in-out" style={{ backgroundColor: 'rgba(17, 24, 39, 0.95)' }}>
       <div
-        className={`flex items-center gap-4 transition-all duration-300 ease-in-out ${
+        className={`flex items-center gap-2 transition-all duration-300 ease-in-out ${
           isSearchActive || isDesktopSearchVisible ? "opacity-0 invisible" : "opacity-100 visible"
         } lg:opacity-100 lg:visible`}
       >
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-1">
           <img
             src="https://raw.githubusercontent.com/tvtelugu/swara/refs/heads/main/public/swara.png"
             alt="Swara Logo"
-            className="h-7 w-auto"
+            className="h-6 w-auto"
           />
-          <span className="text-yellow-500 font-extrabold text-lg lg:text-xl">
+          <span className="text-yellow-500 font-extrabold text-base lg:text-lg">
             Sɯαɾα
           </span>
-          <span className="text-yellow-500 font-extrabold text-lg lg:text-xl">
+          <span className="text-yellow-500 font-extrabold text-base lg:text-lg">
             ™
           </span>
         </Link>
       </div>
       
       {/* Desktop Navigation Links and Theme Toggle */}
-      <div className={`hidden lg:flex items-center gap-4 grey font-semibold ml-auto transition-all duration-300 ease-in-out ${
+      <div className={`hidden lg:flex items-center gap-3 grey font-semibold ml-auto transition-all duration-300 ease-in-out ${
         isDesktopSearchVisible ? "opacity-0 invisible" : "opacity-100 visible"
       }`}>
         <button
@@ -215,12 +215,12 @@ const Navbar = () => {
           <IoSearchOutline className="text-xl search" />
         </button>
         <Link to="/Browse" className="flex items-center gap-2 hoover p-2 rounded-full transition-colors duration-200">
-          <IoBrowsersOutline className="text-lg" />
-          <h2 className="text-sm">Browse</h2>
+          <IoBrowsersOutline className="text-base" />
+          <h2 className="text-xs">Browse</h2>
         </Link>
         <Link to="/Music" className="flex items-center gap-2 hoover p-2 rounded-full transition-colors duration-200">
-          <IoMusicalNotesOutline className="text-lg" />
-          <h2 className="text-sm">My Music</h2>
+          <IoMusicalNotesOutline className="text-base" />
+          <h2 className="text-xs">My Music</h2>
         </Link>
         <div className="p-1 rounded-full">
           <Theme />
@@ -228,13 +228,13 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Search Button */}
-      <div className="flex items-center gap-4 lg:hidden">
+      <div className="flex items-center gap-2 lg:hidden">
         <Theme />
         <button
           onClick={() => setIsSearchActive(true)}
-          className="search-btn p-2 rounded-full transition-colors duration-200"
+          className="search-btn p-1 rounded-full transition-colors duration-200"
         >
-          <IoSearchOutline className="text-xl search" />
+          <IoSearchOutline className="text-lg search" />
         </button>
       </div>
 
@@ -246,7 +246,7 @@ const Navbar = () => {
       >
         <form
           onSubmit={handleSearchSubmit}
-          className="relative flex items-center p-4"
+          className="relative flex items-center p-3"
         >
           <button
             type="button"
@@ -254,16 +254,16 @@ const Navbar = () => {
               setIsSearchActive(false);
               setSuggestions([]);
             }}
-            className="search-btn p-2 rounded-full"
+            className="search-btn p-1 rounded-full"
           >
-            <IoCloseOutline className="text-xl search" />
+            <IoCloseOutline className="text-lg search" />
           </button>
           <input
             type="text"
             name="search"
             id="search"
             placeholder="Search for Songs, Artists, and Playlists"
-            className="flex-grow h-9 p-1 pl-4 bg-transparent focus:outline-none text-sm"
+            className="flex-grow h-8 p-1 pl-4 bg-transparent focus:outline-none text-xs"
             value={query}
             onChange={handleSearchInputChange}
             autoComplete="off"
@@ -272,9 +272,9 @@ const Navbar = () => {
           />
           <button
             type="submit"
-            className="search-btn h-9 w-9 rounded-full flex items-center justify-center ml-2"
+            className="search-btn h-8 w-8 rounded-full flex items-center justify-center ml-2"
           >
-            <IoSearchOutline className="text-lg search" />
+            <IoSearchOutline className="text-sm search" />
           </button>
 
           <div
@@ -321,7 +321,7 @@ const Navbar = () => {
             name="search"
             id="search-desktop"
             placeholder="Search for Songs, Artists, and Playlists"
-            className="flex-grow h-9 p-1 pl-6 pr-10 rounded-full focus:outline-none search-input text-sm text-zinc-400"
+            className="flex-grow h-8 p-1 pl-6 pr-10 rounded-full focus:outline-none search-input text-xs text-zinc-400"
             value={query}
             onChange={handleSearchInputChange}
             autoComplete="off"
@@ -334,14 +334,14 @@ const Navbar = () => {
               onClick={closeDesktopSearch}
               className="search-btn-desktop absolute right-10 h-full w-9 flex items-center justify-center"
             >
-              <IoCloseOutline className="text-xl search" />
+              <IoCloseOutline className="text-lg search" />
             </button>
           )}
           <button
             type="submit"
             className="search-btn absolute right-0 h-full w-9 rounded-r-full flex items-center justify-center"
           >
-            <IoSearchOutline className="text-xl search" />
+            <IoSearchOutline className="text-lg search" />
           </button>
           <div
             className={`suggestionSection lg:shadow-xl absolute top-[2.7rem] left-0 right-0 p-3 grid grid-cols-3 gap-3 rounded-xl max-h-[20rem] overflow-y-auto transition-transform duration-200 z-50 ${
