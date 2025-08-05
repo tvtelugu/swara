@@ -48,7 +48,7 @@ const Footer = () => {
               // The color of "𝐌𝐚𝐝𝐡𝐮" is now always red.
               className="text-red-500 hover:text-red-400 hover:underline font-bold transition-colors duration-300"
             >
-              𝐌𝐚𝐝�𝐮
+              𝐌𝐚𝐝𝐡𝐮
             </a>
           </p>
         </div>
