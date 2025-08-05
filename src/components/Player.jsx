@@ -5,10 +5,9 @@ import { PiShuffleBold } from "react-icons/pi";
 import { LuRepeat, LuRepeat1 } from "react-icons/lu";
 import { FaPlay, FaPause, FaHeart, FaRegHeart } from "react-icons/fa";
 import {
-  MdDownload,
-  MdOutlineKeyboardArrowLeft,
-  MdOutlineKeyboardArrowRight,
-  MdOutlineArrowDropDown, // Import the dropdown icon
+  MdDownload,
+  MdOutlineKeyboardArrowLeft,
+  MdOutlineKeyboardArrowRight,
 } from "react-icons/md";
 import { CiMaximize1 } from "react-icons/ci";
 import { PiSpeakerLowFill } from "react-icons/pi";
@@ -17,385 +16,694 @@ import ArtistItems from "./Items/ArtistItems";
 import he from "he";
 import { getSongById, getSuggestionSong } from "../../fetch";
 import SongGrid from "./SongGrid";
-import { Link } from "react-router-dom"; // Use react-router-dom for Link
+import { Link } from "react-router";
 
 const Player = () => {
-  const {
-    currentSong,
-    song,
-    playMusic,
-    isPlaying,
-    shuffle,
-    nextSong,
-    prevSong,
-    toggleShuffle,
-    repeatMode,
-    toggleRepeatMode,
-    downloadSong,
-  } = useContext(MusicContext);
+  const {
+    currentSong,
+    song,
+    playMusic,
+    isPlaying,
+    shuffle,
+    nextSong,
+    prevSong,
+    toggleShuffle,
+    repeatMode,
+    toggleRepeatMode,
+    downloadSong,
+    switchQuality,
+  } = useContext(MusicContext);
 
-  const [volume, setVolume] = useState(() => {
-    return Number(localStorage.getItem("volume")) || 100;
-  });
-  const [isVisible, setIsVisible] = useState(false);
-  const [isMaximized, setisMaximized] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [detail, setDetails] = useState({});
-  const [list, setList] = useState({});
-  const [suggetions, setSuggetion] = useState([]);
-  const [likedSongs, setLikedSongs] = useState(() => {
-    return JSON.parse(localStorage.getItem("likedSongs")) || [];
-  });
+  const [volume, setVolume] = useState(() => {
+    return Number(localStorage.getItem("volume")) || 100;
+  });
+  const [isVisible, setIsVisible] = useState(false); // For showing and hiding the player
+  const [isMaximized, setisMaximized] = useState(false); // For minimizing the player
+  const [currentTime, setCurrentTime] = useState(0);
+  const [detail, setDetails] = useState({});
+  const [list, setList] = useState({});
+  const [suggetions, setSuggetion] = useState([]);
+  const [likedSongs, setLikedSongs] = useState(() => {
+    return JSON.parse(localStorage.getItem("likedSongs")) || [];
+  });
 
-  // 👇 New state for download quality
-  const [selectedQuality, setSelectedQuality] = useState(null);
+  const inputRef = useRef();
 
-  const inputRef = useRef();
+  useEffect(() => {
+    if (!currentSong) return;
 
-  // Your existing useEffect and other functions...
-  // ...
+    const audio = currentSong?.audio;
+    setCurrentTime(audio.currentTime);
 
-  useEffect(() => {
-    if (!currentSong) return;
-    const audio = currentSong?.audio;
-    setCurrentTime(audio.currentTime);
+    const updateProgress = () => {
+      setCurrentTime(audio.currentTime);
+      const progress =
+        (audio.currentTime / Number(currentSong?.duration)) * 100;
+      inputRef.current.style.setProperty("--progress", `${progress}%`);
+    };
 
-    const updateProgress = () => {
-      setCurrentTime(audio.currentTime);
-      const progress = (audio.currentTime / Number(currentSong?.duration)) * 100;
-      inputRef.current.style.setProperty("--progress", `${progress}%`);
-    };
+    audio.addEventListener("timeupdate", updateProgress);
 
-    audio.addEventListener("timeupdate", updateProgress);
+    return () => {
+      audio.removeEventListener("timeupdate", updateProgress);
+    };
+  }, [currentSong, isPlaying]);
 
-    return () => {
-      audio.removeEventListener("timeupdate", updateProgress);
-    };
-  }, [currentSong, isPlaying]);
+  const scrollRef = useRef(null);
+  const scrollLeft = (scrollRef) => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft -= 1000; // Scroll left by 800px
+    }
+  };
 
-  const scrollRef = useRef(null);
-  const scrollLeft = (scrollRef) => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollLeft -= 1000;
-    }
-  };
+  const scrollRight = (scrollRef) => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft += 1000; // Scroll right by 800px
+    }
+  };
 
-  const scrollRight = (scrollRef) => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollLeft += 1000;
-    }
-  };
+  useEffect(() => {
+    setIsVisible(!!(currentSong || isPlaying));
+  }, [currentSong, isPlaying]);
 
-  useEffect(() => {
-    setIsVisible(!!(currentSong || isPlaying));
-  }, [currentSong, isPlaying]);
+  const artistNames = currentSong?.artists?.primary
+    ? currentSong.artists.primary.map((artist) => artist.name).join(", ")
+    : "Unknown Artist";
 
-  const artistNames = currentSong?.artists?.primary
-    ? currentSong.artists.primary.map((artist) => artist.name).join(", ")
-    : "Unknown Artist";
+  useEffect(() => {
+    const albumDetail = async () => {
+      const result = await getSongById(currentSong.id);
+      setDetails(result.data[0]);
+      // console.log(detail);
+    };
+    if (currentSong?.id) {
+      albumDetail();
+    }
+  }, [currentSong]);
 
-  useEffect(() => {
-    const albumDetail = async () => {
-      const result = await getSongById(currentSong.id);
-      setDetails(result.data[0]);
-    };
-    if (currentSong?.id) {
-      albumDetail();
-    }
-  }, [currentSong]);
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+        if (!currentSong?.id) return;
+        const suggestions = await getSuggestionSong(currentSong.id);
 
-  useEffect(() => {
-    const fetchSuggestions = async () => {
-      if (!currentSong?.id) return;
-      const suggestions = await getSuggestionSong(currentSong.id);
-      setList(suggestions.data);
-      setSuggetion(suggestions.data);
-    };
+        setList(suggestions.data);
+        setSuggetion(suggestions.data);
+     
+    };
 
-    fetchSuggestions();
+    fetchSuggestions();
 
-    if (currentSong) {
-      const audioElement = currentSong.audio;
-      audioElement.volume = volume / 100;
+    if (currentSong) {
+      const audioElement = currentSong.audio;
 
-      const handleTimeUpdate = () => {
-        setCurrentTime(audioElement.currentTime);
-        const duration = Number(currentSong.duration);
-        const newTiming = (audioElement.currentTime / duration) * 100;
-        if (inputRef.current) {
-          inputRef.current.value = newTiming;
-        }
-      };
+      audioElement.volume = volume / 100;
 
-      const handleEndSong = () => {
-        if (!currentSong || !currentSong.id) return;
-        nextSong();
-      };
+      const handleTimeUpdate = () => {
+        setCurrentTime(audioElement.currentTime); // Update currentTime state
+        const duration = Number(currentSong.duration);
+        const newTiming = (audioElement.currentTime / duration) * 100;
+        if (inputRef.current) {
+          inputRef.current.value = newTiming;
+        }
+      };
 
-      audioElement.addEventListener("timeupdate", handleTimeUpdate);
-      audioElement.addEventListener("ended", handleEndSong);
+      const handleEndSong = () => {
+        if (!currentSong || !currentSong.id) return; // Prevents running if currentSong is missing
+        nextSong(); // Call nextSong when the current song ends
+      };
 
-      return () => {
-        audioElement.removeEventListener("timeupdate", handleTimeUpdate);
-        audioElement.removeEventListener("ended", handleEndSong);
-      };
-    }
-  }, [currentSong, volume, nextSong]);
+      audioElement.addEventListener("timeupdate", handleTimeUpdate);
+      audioElement.addEventListener("ended", handleEndSong);
 
-  const handleProgressChange = (event) => {
-    const newPercentage = parseFloat(event.target.value);
-    const newTime = (newPercentage / 100) * Number(currentSong.duration);
-    currentSong.audio.currentTime = newTime;
-    setCurrentTime(newTime);
-  };
+      return () => {
+        audioElement.removeEventListener("timeupdate", handleTimeUpdate);
+        audioElement.removeEventListener("ended", handleEndSong);
+      };
+    }
+  }, [currentSong, volume, nextSong]);
 
-  const handleVolumeChange = (event) => {
-    const newVolume = parseFloat(event.target.value) / 100;
-    setVolume(newVolume * 100);
-    localStorage.setItem("volume", newVolume * 100);
-    if (currentSong?.audio) {
-      currentSong.audio.volume = newVolume;
-    }
-  };
+  const handleProgressChange = (event) => {
+    const newPercentage = parseFloat(event.target.value);
+    const newTime = (newPercentage / 100) * Number(currentSong.duration);
+    currentSong.audio.currentTime = newTime;
+    setCurrentTime(newTime);
 
-  const handleMaximized = () => {
-    setisMaximized(!isMaximized);
-  };
+    // Update currentTime to match slider
+  };
 
-  const formatTime = (time) => {
-    const minutes = Math.floor(time / 60).toString().padStart(2, "0");
-    const seconds = Math.floor(time % 60).toString().padStart(2, "0");
-    return `${minutes}:${seconds}`;
-  };
+  const handleVolumeChange = (event) => {
+    const newVolume = parseFloat(event.target.value) / 100;
+    setVolume(newVolume * 100);
+    localStorage.setItem("volume", newVolume * 100); // Save volume to localStorage
+    if (currentSong?.audio) {
+      currentSong.audio.volume = newVolume;
+    }
+  };
 
-  const toggleLikeSong = () => {
-    if (!currentSong) return;
+  const handleMaximized = () => {
+    setisMaximized(!isMaximized); // Toggle minimize state
+  };
 
-    const songData = {
-      id: currentSong.id,
-      name: currentSong.name,
-      audio: currentSong.audio.currentSrc,
-      duration: currentSong.duration,
-      image: currentSong.image,
-      artists: currentSong.artists,
-    };
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60)
+      .toString()
+      .padStart(2, "0");
+    const seconds = Math.floor(time % 60)
+      .toString()
+      .padStart(2, "0");
+    return `${minutes}:${seconds}`;
+  };
 
-    const updatedLikedSongs = likedSongs.some(
-      (song) => song.id === currentSong.id
-    )
-      ? likedSongs.filter((song) => song.id !== currentSong.id)
-      : [...likedSongs, songData];
+  const toggleLikeSong = () => {
+    if (!currentSong) return;
 
-    setLikedSongs(updatedLikedSongs);
-    localStorage.setItem("likedSongs", JSON.stringify(updatedLikedSongs));
-  };
-  const name = currentSong?.name || "Unknown Title";
+    // Extract only necessary properties
+    const songData = {
+      id: currentSong.id,
+      name: currentSong.name,
+      audio: currentSong.audio.currentSrc, // Ensure this is a URL
+      duration: currentSong.duration,
+      image: currentSong.image,
+      artists: currentSong.artists,
+    };
 
-  useEffect(() => {
-    if ("mediaSession" in navigator) {
-      navigator.mediaSession.metadata = new MediaMetadata({
-        title: he.decode(name),
-        artist: he.decode(artistNames),
-        album: "Musify",
-        artwork: [
-          {
-            src: currentSong?.image || "/Unknown.png",
-            sizes: "500x500",
-            type: "image/png",
-          },
-        ],
-      });
+    const updatedLikedSongs = likedSongs.some(
+      (song) => song.id === currentSong.id
+    )
+      ? likedSongs.filter((song) => song.id !== currentSong.id) // Remove song if already liked
+      : [...likedSongs, songData]; // Add cleaned song data
 
-      navigator.mediaSession.setActionHandler("play", () => {
-        playMusic(
-          currentSong?.audio.currentSrc,
-          currentSong?.name,
-          currentSong?.duration,
-          currentSong?.image,
-          currentSong?.id,
-          song
-        );
-      });
+    setLikedSongs(updatedLikedSongs);
+    localStorage.setItem("likedSongs", JSON.stringify(updatedLikedSongs));
+  };
+  const name = currentSong?.name || "Unknown Title";
+  useEffect(() => {
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: he.decode(name),
+        artist: he.decode(artistNames),
+        album: "Musify",
+        artwork: [
+          {
+            src: currentSong?.image || "/Unknown.png",
+            sizes: "500x500",
+            type: "image/png",
+          },
+        ],
+      });
 
-      navigator.mediaSession.setActionHandler("pause", () => {
-        playMusic(
-          currentSong?.audio.currentSrc,
-          currentSong?.name,
-          currentSong?.duration,
-          currentSong?.image,
-          currentSong?.id,
-          song
-        );
-      });
+      navigator.mediaSession.setActionHandler("play", () => {
+        playMusic(
+          currentSong?.audio.currentSrc,
+          currentSong?.name,
+          currentSong?.duration,
+          currentSong?.image,
+          currentSong?.id,
+          song
+        );
+      });
 
-      navigator.mediaSession.setActionHandler("previoustrack", prevSong);
-      navigator.mediaSession.setActionHandler("nexttrack", nextSong);
-    }
-  }, [currentSong, artistNames, playMusic, prevSong, nextSong, song, name]);
+      navigator.mediaSession.setActionHandler("pause", () => {
+        playMusic(
+          currentSong?.audio.currentSrc,
+          currentSong?.name,
+          currentSong?.duration,
+          currentSong?.image,
+          currentSong?.id,
+          song
+        );
+      });
 
-  const theme = document.documentElement.getAttribute("data-theme");
+      navigator.mediaSession.setActionHandler("previoustrack", prevSong);
+      navigator.mediaSession.setActionHandler("nexttrack", nextSong);
+    }
+  }, [currentSong, artistNames, playMusic, prevSong, nextSong, song, name]);
+  const theme = document.documentElement.getAttribute("data-theme");
 
-  if (currentSong) {
-    if (repeatMode === "one") {
-      currentSong.audio.loop = true;
-    } else {
-      currentSong.audio.loop = false;
-    }
-  }
+  if (currentSong) {
+    if (repeatMode === "one") {
+      currentSong.audio.loop = true;
+    } else {
+      currentSong.audio.loop = false;
+    }
+  }
 
-  // New function to handle quality selection
-  const handleQualitySelect = (quality) => {
-    setSelectedQuality(quality);
-  };
+  return (
+    <div
+      className={` ${isVisible ? "lg:flex " : "hidden"}
+      fixed bottom-14 lg:bottom-0 left-0 w-screen z-20 flex   justify-center items-center   `}
+    >
+      <div
+        className={`flex flex-col h-auto w-screen bg-auto rounded-tl-xl rounded-tr-xl  relative transition-all ease-in-out duration-500  ${
+          isMaximized
+            ? "  pt-[26rem] backdrop-brightness-[0.4]"
+            : "lg:h-[6rem] h-auto p-4 Player"
+        }`}
+      >
+        <div className="flex flex-col w-full">
+          {!isMaximized && (
+            <>
+              <form className="flex items-center w-full mb-4 gap-3 h-[0px]">
+                <span className=" text-xs ">{formatTime(currentTime)} </span>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  step="0.1"
+                  ref={inputRef}
+                  value={
+                    currentSong?.audio?.currentTime
+                      ? (currentTime / Number(currentSong.duration)) * 100
+                      : 0
+                  }
+                  style={{
+                    background: `linear-gradient(to right, ${
+                      theme === "dark" ? "#ddd" : "#09090B"
+                    } ${
+                      (currentTime / Number(currentSong?.duration)) * 100
+                    }%, ${theme === "dark" ? "#252525" : "#dddddd"} ${
+                      (currentTime / Number(currentSong?.duration)) * 100
+                    }%)`,
+                  }}
+                  onChange={handleProgressChange}
+                  className="range"
+                />
+                <span className=" text-xs">
+                  {formatTime(currentSong?.duration || 0)}
+                </span>
+              </form>
+              <div className="h-[3rem] w-full">
+                <div className="flex justify-between items-center  mb-4">
+                  <div
+                    className="flex w-full  lg:w-auto"
+                    onClick={handleMaximized}
+                  >
+                    <div className="flex items-center gap-3 ">
+                      <img
+                        src={currentSong?.image || " "}
+                        alt={currentSong?.name || ""}
+                        width={55}
+                        className="rounded"
+                      />
+                      <div className="flex flex-col overflow-y-clip p-1 w-[14rem] h-[2.9rem]">
+                        <span className=" w-fit h-[1.5rem] overflow-hidden">
+                          {currentSong?.name
+                            ? he.decode(currentSong.name)
+                            : "Empty"}
+                        </span>
 
-  // Modified downloadSong function to use selectedQuality
-  const downloadSelectedSong = async () => {
-    if (currentSong?.downloadUrl) {
-      try {
-        // Use the selected quality or default to the highest available
-        const qualityUrl = currentSong.downloadUrl.find(
-          (url) => url.quality === selectedQuality
-        )?.url || currentSong.downloadUrl[currentSong.downloadUrl.length - 1].url;
+                        <span className="text-xs h-1 ">
+                          {he.decode(artistNames)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col lg:items-center gap-5   p-2">
+                    <div className="flex gap-5 justify-end lg:justify-center items-center">
+                      {repeatMode === "none" ? (
+                        <LuRepeat
+                          className={` text-2xl hidden lg:block cursor-pointer hover:text-[#ff3448] `}
+                          onClick={toggleRepeatMode}
+                          title={`Repeat Mode: ${
+                            repeatMode === "none" ? "none" : "one"
+                          }`}
+                        />
+                      ) : (
+                        <LuRepeat1
+                          className={
+                            " text-2xl hidden lg:block cursor-pointer text-[#ff3448]"
+                          }
+                          onClick={toggleRepeatMode}
+                          title={`Repeat Mode: ${
+                            repeatMode === "none" ? "none" : "one"
+                          }`}
+                        />
+                      )}
+                      <IoMdSkipBackward
+                        className="icon hidden lg:block hover:scale-110 text-2xl cursor-pointer"
+                        onClick={prevSong}
+                      />
+                      <div className=" rounded-full p-2">
+                        {isPlaying ? (
+                          <FaPause
+                            className="  p-[0.1rem] icon hover:scale-110 text-xl lg:text-2xl cursor-pointer"
+                            onClick={() =>
+                              playMusic(
+                                currentSong?.audio.currentSrc,
+                                currentSong?.name,
+                                currentSong?.duration,
+                                currentSong?.image,
+                                currentSong?.id,
+                                song
+                              )
+                            }
+                          />
+                        ) : (
+                          <FaPlay
+                            className=" icon p-[0.1rem] hover:scale-110 text-xl lg:text-2xl cursor-pointer"
+                            onClick={() =>
+                              playMusic(
+                                currentSong?.audio.currentSrc,
+                                currentSong?.name,
+                                currentSong?.duration,
+                                currentSong?.image,
+                                currentSong?.id,
+                                song
+                              )
+                            }
+                          />
+                        )}
+                    </div>
+                    <IoMdSkipForward
+                        className="icon hidden lg:block hover:scale-110 text-2xl cursor-pointer"
+                        onClick={nextSong}
+                      />
+                      <PiShuffleBold
+                        className={` hidden lg:block hover:text-[#fd3a4e] text-2xl cursor-pointer ${
+                          shuffle ? "text-[#fd3a4e]" : ""
+                        }`}
+                        onClick={toggleShuffle}
+                      />
+                    </div>
+                  </div>
 
-        const response = await fetch(qualityUrl);
-        const blob = await response.blob();
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = `${he.decode(currentSong.name)}.mp3`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
-      } catch (error) {
-        console.error("Error downloading the song:", error);
-        alert("Failed to download the song!");
-      }
-    } else {
-      alert("Download URL is not available!");
-    }
-  };
+                  <div className="lg:flex hidden  items-center gap-5 justify-end">
+                    <button onClick={toggleLikeSong} title="Like Song">
+                      {likedSongs.some(
+                        (song) => song.id === currentSong?.id
+                      ) ? (
+                        <FaHeart className="text-red-500" />
+                      ) : (
+                        <FaRegHeart className="icon" />
+                      )}
+                    </button>
+                    {currentSong?.qualities && (
+                      <div className="relative group">
+                        <button className="hover:text-[#fd3a4e] icon text-2xl cursor-pointer">
+                          {currentSong.selectedQuality}
+                        </button>
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:block z-30">
+                          <div className="flex flex-col">
+                            {currentSong.qualities.map((quality) => (
+                              <button
+                                key={quality.quality}
+                                onClick={() => switchQuality(quality.quality)}
+                                className="py-1 px-2 text-left hover:bg-gray-700"
+                              >
+                                {quality.quality}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <MdDownload
+                      className="hover:text-[#fd3a4e] icon  text-2xl cursor-pointer"
+                      onClick={downloadSong}
+                      title="Download Song"
+                    />
+                    <div className="items-center gap-1 flex ">
+                      <PiSpeakerLowFill className="text-xl" />
+                      <input
+                        type="range"
+                        min={0}
+                        max={100}
+                        step={1}
+                        value={volume}
+                        onChange={handleVolumeChange}
+                        className="volume icon rounded-lg appearance-none cursor-pointer w-[80px] h-1"
+                        style={{
+                          background: `linear-gradient(to right, ${
+                            theme === "dark" ? "#ddd" : "#09090B"
+                          } ${volume}%, ${
+                            theme === "dark" ? "#252525" : "#dddddd"
+                          } ${volume}%)`,
+                        }}
+                        title="Volume"
+                      />
+                    </div>
+                    <div className="flex">
+                      <CiMaximize1
+                        title="Maximize"
+                        className="icon p-1 text-2xl rounded icon cursor-pointer"
+                        onClick={handleMaximized}
+                      />
+                    </div>
+                </div>
+              </div>
+            </>
+          )}
+          {isMaximized && (
+            <>
+              <div className="flex w-full bottom-0 flex-col p-2 pt-2 lg:h-[40rem] h-[45rem] gap-4 scroll-hide overflow-y-scroll rounded-tl-2xl rounded-tr-2xl Player scroll-smooth">
+                <div className=" flex w-[97%] justify-end ">
+                  <IoIosClose
+                    className="  icon text-[3rem] cursor-pointer"
+                    onClick={handleMaximized}
+                  />
+                </div>
+                <div className=" ">
+                  <div className="flex lg:flex-row flex-col">
+                    <div className=" flex  justify-center items-center lg:pl-[2.5rem]">
+                      <img
+                        src={currentSong?.image || " "}
+                        className=" h-[22rem] lg:h-[17rem]  rounded-lg object-cover shadow-2xl profile"
+                      />
+                    </div>
 
-  return (
-    <div
-      className={` ${isVisible ? "lg:flex " : "hidden"}
-      fixed bottom-14 lg:bottom-0 left-0 w-screen z-20 flex justify-center items-center`}
-    >
-      <div
-        className={`flex flex-col h-auto w-screen bg-auto rounded-tl-xl rounded-tr-xl relative transition-all ease-in-out duration-500 ${
-          isMaximized
-            ? "pt-[26rem] backdrop-brightness-[0.4]"
-            : "lg:h-[6rem] h-auto p-4 Player"
-        }`}
-      >
-        <div className="flex flex-col w-full">
-          {!isMaximized && (
-            <>
-              {/* Your existing player UI (progress bar, etc.) */}
-            </>
-          )}
+                    <div className="flex flex-col justify-center lg:w-[70%] lg:pl-5 p-1  gap-4">
+                      <div className="flex  flex-col  gap-[0.5rem] mt-5 lg:ml-1 ml-[1.5rem]">
+                        <span className=" text-2xl font-semibold h-auto  justify-between  flex  overflow-clip  ">
+                          {currentSong?.name
+                            ? he.decode(currentSong.name)
+                            : "Empty"}
 
-          {isMaximized && (
-            <>
-              {/* Maximized player UI */}
-              <div className="flex w-full bottom-0 flex-col p-2 pt-2 lg:h-[40rem] h-[45rem] gap-4 scroll-hide overflow-y-scroll rounded-tl-2xl rounded-tr-2xl Player scroll-smooth">
-                {/* Close button and other info */}
-                <div className=" flex w-[97%] justify-end ">
-                  <IoIosClose
-                    className="icon text-[3rem] cursor-pointer"
-                    onClick={handleMaximized}
-                  />
-                </div>
-                <div className=" ">
-                  <div className="flex lg:flex-row flex-col">
-                    <div className=" flex justify-center items-center lg:pl-[2.5rem]">
-                      <img
-                        src={currentSong?.image || " "}
-                        className=" h-[22rem] lg:h-[17rem] rounded-lg object-cover shadow-2xl profile"
-                      />
-                    </div>
-                    <div className="flex flex-col justify-center lg:w-[70%] lg:pl-5 p-1 gap-4">
-                      <div className="flex flex-col gap-[0.5rem] mt-5 lg:ml-1 ml-[1.5rem]">
-                        <span className=" text-2xl font-semibold h-auto justify-between flex overflow-clip ">
-                          {currentSong?.name
-                            ? he.decode(currentSong.name)
-                            : "Empty"}
-                        </span>
-                        <span className="overflow-hidden flex w-[98%] mb-1 text-base font-medium justify-between h-[1.84rem] ">
-                          {he.decode(artistNames)}
-                          <span className="flex gap-3 justify-center place-items-center ">
-                            <button
-                              onClick={toggleLikeSong}
-                              title="Like Song"
-                              className=" "
-                            >
-                              {likedSongs.some(
-                                (song) => song.id === currentSong?.id
-                              ) ? (
-                                <FaHeart className="text-red-500 text-2xl" />
-                              ) : (
-                                <FaRegHeart className="icon text-2xl hover:text-red-500" />
-                              )}
-                            </button>
-                            {/* --- Start of New Quality Switch and Download Button --- */}
-                            {currentSong?.downloadUrl && (
-                                <div className="relative group">
-                                <button className="flex items-center gap-1 text-lg rounded-lg p-1.5 icon lg:hover:text-[#fd3a4e] active:text-[#fd3a4e]" title="Download Quality">
-                                    <span>{selectedQuality || "Download"}</span>
-                                    <MdOutlineArrowDropDown className="text-2xl" />
-                                </button>
-                                <div className="absolute top-full -left-2 mt-2 hidden group-hover:flex flex-col bg-gray-800 rounded-lg shadow-lg z-50">
-                                    {currentSong.downloadUrl.map((urlObj) => (
-                                    <button
-                                        key={urlObj.quality}
-                                        className="text-left p-2 hover:bg-gray-700 w-full"
-                                        onClick={() => handleQualitySelect(urlObj.quality)}
-                                    >
-                                        {urlObj.quality}kbps
-                                    </button>
-                                    ))}
-                                </div>
-                                </div>
-                            )}
-                            <MdDownload
-                                className="lg:hover:text-[#fd3a4e] active:text-[#fd3a4e] flex self-center text-[1.8rem] cursor-pointer icon"
-                                onClick={downloadSelectedSong}
-                                title={`Download Song${selectedQuality ? ` (${selectedQuality}kbps)` : ""}`}
-                            />
-                            {/* --- End of New Quality Switch and Download Button --- */}
-                          </span>
-                        </span>
-                      </div>
-                      <form className="flex items-center w-full gap-3 h-[0px]">
-                        {/* Progress bar and time */}
-                      </form>
-                      <div className="flex flex-col items-center ">
-                        <div className="flex items-center justify-end lg:w-full lg:gap-[20rem] gap-[0.5rem] ">
-                          <div className="flex items-center gap-5 p-8 w-full lg:w-[36%] justify-end ">
-                            {/* Player controls */}
-                          </div>
-                          <IoShareSocial
-                            className="icon text-3xl hidden lg:block cursor-pointer lg:hover:scale-105 mr-4 "
-                            onClick={() =>
-                              navigator.share({
-                                title: currentSong.name,
-                                text: `Listen to ${currentSong.name} on Musify`,
-                                url: `${window.location.origin}/albums/${detail.album.id}`,
-                              })
-                            }
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {/* ... other parts of the maximized player UI ... */}
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+                        </span>
+                        <span className="overflow-hidden  flex  w-[98%] mb-1  text-base font-medium  justify-between h-[1.84rem]      ">
+                          {he.decode(artistNames)}
+                          <span className="flex gap-3 justify-center place-items-center ">
+                            <button
+                              onClick={toggleLikeSong}
+                              title="Like Song"
+                              className=" "
+                            >
+                              {likedSongs.some(
+                                (song) => song.id === currentSong?.id
+                              ) ? (
+                                <FaHeart className="text-red-500 text-2xl" />
+                              ) : (
+                                <FaRegHeart className="icon text-2xl hover:text-red-500" />
+                              )}
+                            </button>
+                            <MdDownload
+                              className="lg:hover:text-[#fd3a4e] active:text-[#fd3a4e]  flex self-center text-[1.8rem] cursor-pointer icon"
+                              onClick={downloadSong}
+                              title="Download Song"
+                            />
+                          </span>
+                        </span>
+                      </div>
+                      <form className="flex items-center w-full gap-3 h-[0px]">
+                        <span className="lg:hidden block  text-xs ">
+                          {formatTime(currentTime)}{" "}
+                        </span>
+                        <input
+                          type="range"
+                          min={0}
+                          max={100}
+                          step="0.1"
+                          ref={inputRef}
+                          value={
+                            currentSong?.audio?.currentTime
+                              ? (currentTime / Number(currentSong.duration)) *
+                                100
+                              : 0
+                          }
+                          style={{
+                            background: `linear-gradient(to right, ${
+                              theme === "dark" ? "#ddd" : "#252525"
+                            } ${
+                              (currentTime / Number(currentSong?.duration)) *
+                              100
+                            }%, ${theme === "dark" ? "#252525" : "#dddddd"} ${
+                              (currentTime / Number(currentSong?.duration)) *
+                              100
+                            }%)`,
+                          }}
+                          onChange={handleProgressChange}
+                          className="range"
+                        />
+                        <span className="lg:hidden block  text-xs">
+                          {formatTime(currentSong?.duration || 0)}
+                        </span>
+                      </form>
+                      <div className="flex flex-col items-center ">
+                        <div className="flex items-center justify-end lg:w-full lg:gap-[20rem] gap-[0.5rem] ">
+                          <div className="flex  items-center gap-5 p-8 w-full lg:w-[36%] justify-end ">
+                            {repeatMode === "none" ? (
+                              <LuRepeat
+                                className={` text-2xl  cursor-pointer lg:hover:text-[#ff3448] `}
+                                onClick={toggleRepeatMode}
+                                title={`Repeat Mode: ${
+                                  repeatMode === "none" ? "none" : "one"
+                                }`}
+                              />
+                            ) : (
+                              <LuRepeat1
+                                className={
+                                  " text-2xl cursor-pointer text-[#ff3448]"
+                                }
+                                onClick={toggleRepeatMode}
+                                title={`Repeat Mode: ${
+                                  repeatMode === "none" ? "none" : "one"
+                                }`}
+                              />
+                            )}
+                            <IoMdSkipBackward
+                              className="icon lg:hover:scale-110 text-3xl cursor-pointer"
+                              onClick={prevSong}
+                            />
+                            <div>
+                              {isPlaying ? (
+                                <FaPause
+                                  className="p-[0.1rem] icon lg:hover:scale-110 text-3xl cursor-pointer"
+                                  onClick={() =>
+                                    playMusic(
+                                      currentSong?.audio.currentSrc,
+                                      currentSong?.name,
+                                      currentSong?.duration,
+                                      currentSong?.image,
+                                      currentSong?.id,
+                                      song
+                                    )
+                                  }
+                                />
+                              ) : (
+                                <FaPlay
+                                  className=" icon p-[0.1rem] lg:hover:scale-110 text-3xl cursor-pointer"
+                                  onClick={() =>
+                                    playMusic(
+                                      currentSong?.audio.currentSrc,
+                                      currentSong?.name,
+                                      currentSong?.duration,
+                                      currentSong?.image,
+                                      currentSong?.id,
+                                      song
+                                    )
+                                  }
+                                />
+                              )}
+                            </div>
+                            <IoMdSkipForward
+                              className="icon lg:hover:scale-110 text-3xl cursor-pointer"
+                              onClick={nextSong}
+                            />
+                            <PiShuffleBold
+                              className={` text-3xl cursor-pointer  lg:hover:text-[#fd3a4e] ${
+                                shuffle ? " text-[#fd3a4e] " : ""
+                              }`}
+                              onClick={toggleShuffle}
+                            />
+                          </div>
+
+                          <IoShareSocial
+                            className="icon text-3xl hidden lg:block cursor-pointer  lg:hover:scale-105 mr-4 "
+                            onClick={() =>
+                              navigator.share({
+                                title: currentSong.name,
+                                text: `Listen to ${currentSong.name} on Musify`,
+                                url: `${window.location.origin}/albums/${detail.album.id}`,
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col overflow-hidden  p-1">
+                    <div>
+                       {suggetions.length >= 0 && (
+                          <div className="flex flex-col justify-center items-center w-full ">
+                            <h2 className="pr-1 m-4 text-xl lg:text-2xl font-semibold w-full ml-[2.5rem] lg:ml-[5.5rem] ">
+                              You Might Like
+                            </h2>
+                            <div className="flex justify-center items-center gap-3 w-full">
+                              {/* Left Arrow */}
+                               <MdOutlineKeyboardArrowLeft
+                                className="text-3xl hover:scale-125 cursor-pointer h-[9rem]   hidden lg:block arrow-btn"
+                                onClick={() => scrollLeft(scrollRef)}
+                              />
+                              <div
+                                className="grid grid-rows-1  grid-flow-col justify-start overflow-x-scroll scroll-hide items-center gap-3 lg:gap-[.35rem] w-full  px-3 lg:px-0 scroll-smooth"
+                                ref={scrollRef}
+                              >
+                                {suggetions?.map((song, index) => (
+                                  <SongGrid
+                                    key={song.id || index}
+                                    {...song}
+                                     song={list}
+                                  /> 
+                                ))}
+                              </div>
+                              {/* Right Arrow */}
+                             <MdOutlineKeyboardArrowRight
+                                className="text-3xl hover:scale-125  cursor-pointer h-[9rem] hidden lg:block arrow-btn"
+                                onClick={() => scrollRight(scrollRef)}
+                              />
+                            </div> 
+                          </div>
+                        )}
+                       
+                    </div>
+                    <div className="flex flex-col pt-3 ">
+                      <h2 className="pr-1 text-xl lg:text-2xl font-semibold  w-full ml-[2rem] lg:ml-[3.5rem] lg:m-3 ">
+                        Artists
+                      </h2>
+                      <div className="grid grid-flow-col lg:w-max w-full scroll-smooth gap-[1rem] lg:gap-[1.5rem] lg:pl-[2rem] pl-[1rem] overflow-x-scroll scroll-hide ">
+                        {currentSong.artists.primary.map((artist, index) => (
+                          <ArtistItems
+                            key={`${artist.id || index}`}
+                            {...artist}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col lg:flex-row gap-[2rem] ">
+                      <div className="flex flex-col ">
+                        <h2 className="pr-1 text-xl lg:text-2xl font-semibold  w-full ml-[2rem] lg:ml-[3.5rem] ">
+                          From Album ...
+                        </h2>
+                        <Link
+                          to={`/albums/${detail.album.id}`}
+                          className="card  w-[12.5rem] h-fit overflow-clip  border-[0.1px]  p-1  rounded-lg lg:mx-[2rem] mt-[1rem] "
+                        >
+                          <div className="p-1">
+                            <img
+                              src={currentSong.image || "/Unknown.png"}
+                              alt={name}
+                              className="rounded-lg "
+                            />
+                          </div>
+                          <div className="w-full flex flex-col justify-center pl-2">
+                            <span className="font-semibold text-[1.1rem] overflow-x-clip ">
+                              {detail.album.name
+                                ? he.decode(detail.album.name)
+                                : ""}
+                            </span>
+                          </div>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Player;
