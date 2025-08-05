@@ -653,7 +653,6 @@ const Player = () => {
                             </div> 
                           </div>
                         )}
-                       
                     </div>
                     <div className="flex flex-col pt-3 ">
                       <h2 className="pr-1 text-xl lg:text-2xl font-semibold  w-full ml-[2rem] lg:ml-[3.5rem] lg:m-3 ">
@@ -697,7 +696,6 @@ const Player = () => {
                     </div>
                   </div>
                 </div>
-              </div>
             </>
           )}
         </div>
