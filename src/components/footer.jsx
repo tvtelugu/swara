@@ -15,9 +15,9 @@ const Footer = () => {
   ];
 
   return (
-    // Added pb-[3.6rem] to the footer to prevent it from being hidden by the fixed navigator bar.
-    // The padding is only applied on small screens, and is removed on larger screens (lg:pb-0).
-    <footer className="bg-gray-900 text-gray-400 py-8 px-4 pb-[3.6rem] lg:pb-0 lg:px-24">
+    // Updated className to remove background and most padding on mobile, while keeping it for larger screens.
+    // The essential bottom padding pb-[3.6rem] is kept to prevent the fixed navigator bar from hiding the content.
+    <footer className="text-gray-400 pb-[3.6rem] md:bg-gray-900 md:py-8 md:px-4 lg:pb-0 lg:px-24">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
         {/* Top Artists section - now hidden on small screens and shown on medium screens and up */}
         <div className="hidden md:block md:mb-0 w-full md:w-auto">
