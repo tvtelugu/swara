@@ -10,6 +10,7 @@ import MusicContext from "../context/MusicContext";
 import he from "he";
 import Theme from "../../theme";
 import { IoSearchOutline, IoCloseOutline } from "react-icons/io5";
+import { MdOutlineLibraryMusic, MdOutlineExplore } from "react-icons/md";
 
 const Navbar = () => {
   const { playMusic } = useContext(MusicContext);
@@ -252,15 +253,19 @@ const Navbar = () => {
         {/* Desktop links and search */}
         <div className="hidden lg:flex items-center gap-6 flex-grow justify-center">
           <div className="flex items-center space-x-6">
-            <Link to="/Browse" className="p-2">
-              <h2 className="text-xl text-zinc-400 font-semibold hover:text-zinc-100 transition-colors">
-                Browse
-              </h2>
+            <Link
+              to="/Browse"
+              className="p-2 flex items-center space-x-2 text-zinc-400 font-semibold hover:text-zinc-100 transition-colors"
+            >
+              <MdOutlineExplore className="text-2xl" />
+              <h2 className="text-xl">Browse</h2>
             </Link>
-            <Link to="/Music" className="p-2">
-              <h2 className="text-xl text-zinc-400 font-semibold hover:text-zinc-100 transition-colors">
-                My Music
-              </h2>
+            <Link
+              to="/Music"
+              className="p-2 flex items-center space-x-2 text-zinc-400 font-semibold hover:text-zinc-100 transition-colors"
+            >
+              <MdOutlineLibraryMusic className="text-2xl" />
+              <h2 className="text-xl">My Music</h2>
             </Link>
           </div>
           <div className="relative flex-grow max-w-lg" ref={searchBarRef}>
@@ -316,8 +321,22 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Desktop Theme Switch and mobile Search button */}
+        {/* Mobile icons and Theme Switch */}
         <div className="flex items-center gap-4 flex-shrink-0">
+          <div className="flex lg:hidden items-center gap-4">
+            <Link
+              to="/Browse"
+              className="text-2xl text-white flex items-center justify-center p-2 rounded-full hover:bg-gray-700 transition"
+            >
+              <MdOutlineExplore />
+            </Link>
+            <Link
+              to="/Music"
+              className="text-2xl text-white flex items-center justify-center p-2 rounded-full hover:bg-gray-700 transition"
+            >
+              <MdOutlineLibraryMusic />
+            </Link>
+          </div>
           <div className="hidden lg:block">
             <Theme />
           </div>
