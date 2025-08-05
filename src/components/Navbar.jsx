@@ -179,9 +179,15 @@ const Navbar = () => {
           </span>
         </Link>
       </div>
-
+      
       {/* Desktop Navigation Links and Theme Toggle */}
       <div className="hidden lg:flex items-center gap-6 grey font-semibold ml-auto">
+        <button
+          onClick={toggleDesktopSearch}
+          className="search-btn p-2 rounded-full transition-colors duration-200"
+        >
+          <IoSearchOutline className="text-2xl search" />
+        </button>
         <Link to="/Browse" className="flex items-center gap-2 hoover p-2 rounded-full transition-colors duration-200">
           <IoBrowsersOutline className="text-2xl" />
           <h2 className="text-lg">Browse</h2>
@@ -193,12 +199,6 @@ const Navbar = () => {
         <div className="search-btn p-2 rounded-full">
           <Theme />
         </div>
-        <button
-          onClick={toggleDesktopSearch}
-          className="search-btn p-2 rounded-full transition-colors duration-200"
-        >
-          <IoSearchOutline className="text-2xl search" />
-        </button>
       </div>
 
       {/* Mobile Search Button */}
