@@ -195,10 +195,10 @@ const Navbar = () => {
             alt="Swara Logo"
             className="h-8 w-auto"
           />
-          <span className="text-zinc-600 font-extrabold text-xl lg:text-2xl">
+          <span className="text-yellow-500 font-extrabold text-xl lg:text-2xl">
             Sɯαɾα
           </span>
-          <span className="text-zinc-200 font-extrabold text-xl lg:text-2xl">
+          <span className="text-yellow-500 font-extrabold text-xl lg:text-2xl">
             ™
           </span>
         </Link>
