@@ -15,12 +15,12 @@ const Footer = () => {
   ];
 
   return (
-    // Added pb-[3.6rem] to push the footer up on mobile to avoid being hidden by the fixed navigator bar.
-    // The padding is only applied on screens smaller than 'lg' (lg:pb-0).
+    // Added pb-[3.6rem] to the footer to prevent it from being hidden by the fixed navigator bar.
+    // The padding is only applied on small screens, and is removed on larger screens (lg:pb-0).
     <footer className="bg-gray-900 text-gray-400 py-8 px-4 pb-[3.6rem] lg:pb-0 lg:px-24">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-        {/* Top Artists section */}
-        <div className="md:mb-0 w-full md:w-auto">
+        {/* Top Artists section - now hidden on small screens and shown on medium screens and up */}
+        <div className="hidden md:block md:mb-0 w-full md:w-auto">
           <h4 className="text-white text-lg font-bold mb-4 text-center md:text-left">TOP ARTISTS</h4>
           {/* Using flexbox for a dynamic, wrapping layout on all screen sizes */}
           <ul className="flex flex-wrap justify-center md:justify-start gap-x-4 gap-y-2">
