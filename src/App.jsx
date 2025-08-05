@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AlbumDetail from "./pages/AlbumDetails";
@@ -13,7 +12,6 @@ import he from "he";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-import { ThemeProvider } from "./context/ThemeContext";
 
 export default function App() {
   const [songs, setSongs] = useState([null]);
@@ -22,7 +20,7 @@ export default function App() {
   const [currentSong, setCurrentSong] = useState(null);
   const [shuffle, setShuffle] = useState(false);
   const [repeatMode, setRepeatMode] = useState("none");
-  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false); // State for success popup
 
   const playMusic = async (
     downloadUrl,
@@ -77,31 +75,34 @@ export default function App() {
       playedSongs = playedSongs.slice(0, 20);
     }
 
+    // Save the updated list back to localStorage
     localStorage.setItem("playedSongs", JSON.stringify(playedSongs));
   };
 
   const downloadSong = async () => {
     if (currentSong?.audio?.currentSrc) {
       try {
-        const response = await fetch(currentSong.audio.currentSrc);
-        const blob = await response.blob();
+        const response = await fetch(currentSong.audio.currentSrc); // Fetch the audio file
+        const blob = await response.blob(); // Convert the response to a Blob object
 
         const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
+        link.href = URL.createObjectURL(blob); // Create an object URL from the Blob
         link.download = `${
           currentSong?.name ? he.decode(currentSong.name) : "Empty"
-        }.mp3`;
+        }.mp3`; // Set the download filename
 
         document.body.appendChild(link);
-        link.click();
+        link.click(); // Trigger the download
         document.body.removeChild(link);
 
+        // Revoke the object URL to release memory
         URL.revokeObjectURL(link.href);
 
+        // Show success popup
         setShowSuccessPopup(true);
         setTimeout(() => {
           setShowSuccessPopup(false);
-        }, 3000);
+        }, 3000); // Hide after 3 seconds
       } catch (error) {
         console.error("Error downloading the song:", error);
         alert("Failed to download the song!");
@@ -116,7 +117,8 @@ export default function App() {
       const currentIndex = songs.findIndex(
         (song) => song?.id === currentSong.id
       );
-      if (currentIndex === -1) return;
+      if (currentIndex === -1) return; // Ensure currentIndex is valid
+      
 
       if (shuffle) {
         const randomIndex = Math.floor(Math.random() * songs.length);
@@ -177,12 +179,13 @@ export default function App() {
     });
   };
 
+
   const toggleShuffle = () => {
     setShuffle((prevState) => !prevState);
   };
 
   return (
-    <ThemeProvider>
+    <>
       <SpeedInsights />
       <Analytics />
       <MusicContext.Provider
@@ -218,12 +221,12 @@ export default function App() {
         {showSuccessPopup && (
           <div className="fixed flex justify-center items-center w-full z-30 top-6">
             <div className="flex bg-[#2c2c2c] text-white p-3 rounded shadow-xl gap-3">
-              <IoIosCheckmarkCircle className="flex self-center text-xl " />
+            <IoIosCheckmarkCircle className="flex self-center text-xl " />
               <h2 className="font-semibold">Downloaded</h2>
             </div>
           </div>
         )}
       </MusicContext.Provider>
-    </ThemeProvider>
+    </>
   );
 }
