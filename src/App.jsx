@@ -12,6 +12,7 @@ import he from "he";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { IoIosCheckmarkCircle } from "react-icons/io";
+import { ThemeProvider } from "./context/ThemeContext"; // Import ThemeProvider
 
 export default function App() {
   const [songs, setSongs] = useState([null]);
@@ -118,7 +119,6 @@ export default function App() {
         (song) => song?.id === currentSong.id
       );
       if (currentIndex === -1) return; // Ensure currentIndex is valid
-      
 
       if (shuffle) {
         const randomIndex = Math.floor(Math.random() * songs.length);
@@ -179,13 +179,12 @@ export default function App() {
     });
   };
 
-
   const toggleShuffle = () => {
     setShuffle((prevState) => !prevState);
   };
 
   return (
-    <>
+    <ThemeProvider> {/* Wrap the entire application with ThemeProvider */}
       <SpeedInsights />
       <Analytics />
       <MusicContext.Provider
@@ -221,12 +220,12 @@ export default function App() {
         {showSuccessPopup && (
           <div className="fixed flex justify-center items-center w-full z-30 top-6">
             <div className="flex bg-[#2c2c2c] text-white p-3 rounded shadow-xl gap-3">
-            <IoIosCheckmarkCircle className="flex self-center text-xl " />
+              <IoIosCheckmarkCircle className="flex self-center text-xl " />
               <h2 className="font-semibold">Downloaded</h2>
             </div>
           </div>
         )}
       </MusicContext.Provider>
-    </>
+    </ThemeProvider>
   );
 }
