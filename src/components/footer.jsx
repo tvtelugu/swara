@@ -15,7 +15,9 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-gray-900 text-gray-400 py-8 px-4 lg:px-24">
+    // Added pb-[3.6rem] to push the footer up on mobile to avoid being hidden by the fixed navigator bar.
+    // The padding is only applied on screens smaller than 'lg' (lg:pb-0).
+    <footer className="bg-gray-900 text-gray-400 py-8 px-4 pb-[3.6rem] lg:pb-0 lg:px-24">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
         {/* Top Artists section */}
         <div className="md:mb-0 w-full md:w-auto">
@@ -35,7 +37,7 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Footer info section - now always visible and centered */}
+        {/* Footer info section */}
         <div className="mt-8 md:mt-0 w-full text-center">
           <p className="text-sm">
             © 𝟐𝟎𝟐𝟒 || Sɯαɾα™ Made with ❤️ by{' '}
