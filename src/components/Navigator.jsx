@@ -5,41 +5,41 @@ import { Link, useLocation } from "react-router-dom";
 const Navigator = () => {
   const location = useLocation();
 
-  return (
-    <div className="lg:hidden fixed bottom-0 z-20 w-full Navigator h-[3.6rem] lg:h-[3.5rem] flex items-center justify-around">
-      <Link to="/">
-        <div className="flex flex-col items-center text-sm">
-        {location.pathname === "/" ? (
-            <GoHomeFill className="text-2xl" />
-          ) : (
-            <GoHome className="text-2xl" />
-          )}
-          
-          Home
-        </div>
-      </Link>
+  const navItems = [
+    {
+      path: "/",
+      label: "Home",
+      icon: <GoHome className="text-2xl" />,
+      activeIcon: <GoHomeFill className="text-2xl text-blue-500" />,
+    },
+    {
+      path: "/Browse",
+      label: "Browse",
+      icon: <IoCompassOutline className="text-2xl" />,
+      activeIcon: <IoCompass className="text-2xl text-blue-500" />,
+    },
+    {
+      path: "/Music",
+      label: "My Music",
+      icon: <IoHeartOutline className="text-2xl" />,
+      activeIcon: <IoHeartSharp className="text-2xl text-blue-500" />,
+    },
+  ];
 
-      <Link to="/Browse">
-        <div className="flex flex-col items-center text-sm">
-          {location.pathname === "/Browse" ? (
-            <IoCompass className="text-2xl" />
-          ) : (
-            <IoCompassOutline className="text-2xl" />
-          )}
-          Browse
-        </div>
-      </Link>
-      
-      <Link to="/Music">
-        <div className="flex flex-col items-center text-sm">
-        {location.pathname === "/Music" ? (
-            <IoHeartSharp className="text-2xl" />
-          ) : (
-            <IoHeartOutline className="text-2xl" />
-          )}
-          My Music
-        </div>
-      </Link>
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-20 flex justify-around items-center h-14 bg-white shadow-lg lg:hidden">
+      {navItems.map((item) => (
+        <Link
+          key={item.path}
+          to={item.path}
+          className="flex flex-col items-center justify-center w-full h-full text-sm text-gray-500 transition-colors duration-200 hover:text-blue-500"
+        >
+          {location.pathname === item.path ? item.activeIcon : item.icon}
+          <span className={`text-xs font-medium mt-1 ${location.pathname === item.path ? 'text-blue-500' : 'text-gray-500'}`}>
+            {item.label}
+          </span>
+        </Link>
+      ))}
     </div>
   );
 };
