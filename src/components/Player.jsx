@@ -31,6 +31,7 @@ const Player = () => {
     repeatMode,
     toggleRepeatMode,
     downloadSong,
+    switchQuality,
   } = useContext(MusicContext);
 
   const [volume, setVolume] = useState(() => {
@@ -107,7 +108,7 @@ const Player = () => {
 
         setList(suggestions.data);
         setSuggetion(suggestions.data);
-     
+      
     };
 
     fetchSuggestions();
@@ -250,7 +251,7 @@ const Player = () => {
   return (
     <div
       className={` ${isVisible ? "lg:flex " : "hidden"}
-      fixed bottom-14 lg:bottom-0 left-0 w-screen z-20 flex   justify-center items-center   `}
+      fixed bottom-14 lg:bottom-0 left-0 w-screen z-20 flex   justify-center items-center  `}
     >
       <div
         className={`flex flex-col h-auto w-screen bg-auto rounded-tl-xl rounded-tr-xl  relative transition-all ease-in-out duration-500  ${
@@ -317,7 +318,7 @@ const Player = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-col lg:items-center gap-5   p-2">
+                  <div className="flex flex-col lg:items-center gap-5    p-2">
                     <div className="flex gap-5 justify-end lg:justify-center items-center">
                       {repeatMode === "none" ? (
                         <LuRepeat
@@ -396,6 +397,26 @@ const Player = () => {
                         <FaRegHeart className="icon" />
                       )}
                     </button>
+                    {currentSong?.qualities && (
+                      <div className="relative group">
+                        <button className="hover:text-[#fd3a4e] icon text-2xl cursor-pointer">
+                          {currentSong.selectedQuality}
+                        </button>
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:block z-30">
+                          <div className="flex flex-col">
+                            {currentSong.qualities.map((quality) => (
+                              <button
+                                key={quality.quality}
+                                onClick={() => switchQuality(quality.quality)}
+                                className="py-1 px-2 text-left hover:bg-gray-700"
+                              >
+                                {quality.quality}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     <MdDownload
                       className="hover:text-[#fd3a4e] icon  text-2xl cursor-pointer"
                       onClick={downloadSong}
@@ -457,7 +478,6 @@ const Player = () => {
                           {currentSong?.name
                             ? he.decode(currentSong.name)
                             : "Empty"}
-
                         </span>
                         <span className="overflow-hidden  flex  w-[98%] mb-1  text-base font-medium  justify-between h-[1.84rem]      ">
                           {he.decode(artistNames)}
@@ -475,6 +495,28 @@ const Player = () => {
                                 <FaRegHeart className="icon text-2xl hover:text-red-500" />
                               )}
                             </button>
+                            {currentSong?.qualities && (
+                              <div className="relative group">
+                                <button className="lg:hover:text-[#fd3a4e] active:text-[#fd3a4e] flex self-center text-[1.8rem] cursor-pointer icon">
+                                  {currentSong.selectedQuality}
+                                </button>
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:block z-30">
+                                  <div className="flex flex-col">
+                                    {currentSong.qualities.map((quality) => (
+                                      <button
+                                        key={quality.quality}
+                                        onClick={() =>
+                                          switchQuality(quality.quality)
+                                        }
+                                        className="py-1 px-2 text-left hover:bg-gray-700"
+                                      >
+                                        {quality.quality}
+                                      </button>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                             <MdDownload
                               className="lg:hover:text-[#fd3a4e] active:text-[#fd3a4e]  flex self-center text-[1.8rem] cursor-pointer icon"
                               onClick={downloadSong}
@@ -602,7 +644,7 @@ const Player = () => {
                   </div>
                   <div className="flex flex-col overflow-hidden  p-1">
                     <div>
-                       {suggetions.length >= 0 && (
+                        {suggetions.length >= 0 && (
                           <div className="flex flex-col justify-center items-center w-full ">
                             <h2 className="pr-1 m-4 text-xl lg:text-2xl font-semibold w-full ml-[2.5rem] lg:ml-[5.5rem] ">
                               You Might Like
@@ -610,9 +652,9 @@ const Player = () => {
                             <div className="flex justify-center items-center gap-3 w-full">
                               {/* Left Arrow */}
                                <MdOutlineKeyboardArrowLeft
-                                className="text-3xl hover:scale-125 cursor-pointer h-[9rem]   hidden lg:block arrow-btn"
-                                onClick={() => scrollLeft(scrollRef)}
-                              />
+                               className="text-3xl hover:scale-125 cursor-pointer h-[9rem]    hidden lg:block arrow-btn"
+                               onClick={() => scrollLeft(scrollRef)}
+                             />
                               <div
                                 className="grid grid-rows-1  grid-flow-col justify-start overflow-x-scroll scroll-hide items-center gap-3 lg:gap-[.35rem] w-full  px-3 lg:px-0 scroll-smooth"
                                 ref={scrollRef}
@@ -627,13 +669,13 @@ const Player = () => {
                               </div>
                               {/* Right Arrow */}
                              <MdOutlineKeyboardArrowRight
-                                className="text-3xl hover:scale-125  cursor-pointer h-[9rem] hidden lg:block arrow-btn"
-                                onClick={() => scrollRight(scrollRef)}
-                              />
-                            </div> 
+                               className="text-3xl hover:scale-125  cursor-pointer h-[9rem] hidden lg:block arrow-btn"
+                               onClick={() => scrollRight(scrollRef)}
+                             />
+                            </div>  
                           </div>
                         )}
-                       
+                        
                     </div>
                     <div className="flex flex-col pt-3 ">
                       <h2 className="pr-1 text-xl lg:text-2xl font-semibold  w-full ml-[2rem] lg:ml-[3.5rem] lg:m-3 ">
