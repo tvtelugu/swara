@@ -1,16 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useContext, useEffect, useRef } from "react";
-import {
-  getArtistbyQuery,
-  getSearchData,
-  getSongbyQuery,
-  getSuggestionSong,
-} from "../../fetch";
+import { useState, useContext } from "react";
+import { getArtistbyQuery, getSearchData, getSongbyQuery, getSuggestionSong } from "../../fetch";
 import MusicContext from "../context/MusicContext";
 import he from "he";
 import Theme from "../../theme";
 import { IoSearchOutline, IoCloseOutline } from "react-icons/io5";
-import { MdOutlineLibraryMusic, MdOutlineExplore } from "react-icons/md";
 
 const Navbar = () => {
   const { playMusic } = useContext(MusicContext);
@@ -18,23 +12,6 @@ const Navbar = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const navigate = useNavigate();
-  const searchBarRef = useRef(null);
-
-  useEffect(() => {
-    const handleOutsideClick = (event) => {
-      if (
-        searchBarRef.current &&
-        !searchBarRef.current.contains(event.target)
-      ) {
-        setIsSearchActive(false);
-        setSuggestions([]);
-      }
-    };
-    document.addEventListener("mousedown", handleOutsideClick);
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, []);
 
   let List = [];
 
@@ -70,10 +47,7 @@ const Navbar = () => {
           }))
         );
       }
-      if (
-        searchData.status === "fulfilled" &&
-        searchData.value?.data?.albums?.results
-      ) {
+      if (searchData.status === "fulfilled" && searchData.value?.data?.albums?.results) {
         allSuggestions.push(
           ...searchData.value.data.albums.results.map((item) => ({
             type: "Album",
@@ -84,10 +58,7 @@ const Navbar = () => {
           }))
         );
       }
-      if (
-        searchData.status === "fulfilled" &&
-        searchData.value?.data?.playlists?.results
-      ) {
+      if (searchData.status === "fulfilled" && searchData.value?.data?.playlists?.results) {
         allSuggestions.push(
           ...searchData.value.data.playlists.results.map((item) => ({
             type: "Playlist",
@@ -172,184 +143,113 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar flex items-center top-0 z-20 fixed w-full pl-1 pr-1 lg:px-6 h-[4.5rem]">
-      {/* Mobile-specific search bar (hidden on desktop) */}
+    <nav className="navbar flex flex-col lg:gap-10 lg:flex-row lg:items-center top-0 z-20 fixed w-full pl-1 pr-1 lg:px-2 lg:h-[4.5rem]">
       <div
-        className={`flex-grow absolute top-0 left-0 w-full h-[4.5rem] bg-gray-900 transition-transform duration-300 ease-in-out ${
-          isSearchActive
-            ? "translate-x-0 opacity-100"
-            : "-translate-x-full opacity-0"
-        } lg:hidden flex items-center px-4`}
+        className={`flex items-center justify-between lg:w-auto h-[61px] w-screen gap-5 ${
+          isSearchActive ? "hidden" : "flex"
+        } lg:flex`}
+      >
+        <Link to="/" className="flex items-center">
+          <div className="flex items-center">
+            <img
+              src="https://raw.githubusercontent.com/tvtelugu/swara/refs/heads/main/public/swara.png"
+              alt="Swara Logo"
+              className="h-10 w-auto mr-2"
+            />
+            <span className="Musi text-zinc-600 font-extrabold text-2xl lg:text-3xl">
+              Sɯαɾα
+            </span>
+            <span className="fy text-zinc-200 font-extrabold text-2xl lg:text-3xl">
+              ™
+            </span>
+          </div>
+        </Link>
+        <div className="flex gap-4 items-center">
+          <Theme />
+          <button
+            onClick={() => setIsSearchActive(true)}
+            className="lg:hidden text-2xl flex items-center justify-center p-2 rounded-full search-btn"
+          >
+            <IoSearchOutline className="search" />
+          </button>
+        </div>
+      </div>
+      
+      <div className="lg:flex gap-[2rem] w-[15rem] grey hidden font-semibold">
+        <Link to="/Browse">
+          <h2 className="lg:text-xl text-lg">Browse</h2>
+        </Link>
+        <Link to="/Music">
+          <h2 className="lg:text-xl text-lg ">My Music</h2>
+        </Link>
+      </div>
+
+      <div
+        className={`flex-grow ${
+          isSearchActive ? "flex" : "hidden"
+        } lg:flex items-center`}
       >
         <form
           onSubmit={handleSearchSubmit}
           className="relative flex flex-grow items-center gap-2 w-full"
         >
-          <button
-            type="button"
-            onClick={() => setIsSearchActive(false)}
-            className="text-2xl text-white w-11 h-11 flex items-center justify-center p-2 rounded-full hover:bg-gray-700 transition"
-          >
-            <IoCloseOutline />
-          </button>
-          <input
-            type="text"
-            name="search"
-            id="search-mobile"
-            placeholder="Search for Songs, Artists, and Playlists"
-            className="flex-grow h-11 p-1 pl-5 bg-gray-800 text-white rounded-full focus:outline-none placeholder-gray-400"
-            value={query}
-            onChange={handleSearchInputChange}
-            autoComplete="off"
-            autoCorrect="off"
-          />
-          <button
-            type="submit"
-            className="search-btn-pink h-11 w-11 rounded-full flex items-center justify-center text-white hover:bg-pink-700 transition"
-          >
-            <IoSearchOutline className="text-2xl" />
-          </button>
+          <div className="flex w-full items-center">
+            <button
+              type="button"
+              onClick={() => setIsSearchActive(false)}
+              className="lg:hidden text-2xl w-11 h-11 flex items-center justify-center p-2 rounded-full search-btn"
+            >
+              <IoCloseOutline className="search" />
+            </button>
+            <input
+              type="text"
+              name="search"
+              id="search"
+              placeholder="Search for Songs, Artists, and Playlists"
+              className={`flex-grow h-11 p-1 pl-5 bg-transparent focus:outline-none ${
+                isSearchActive ? "rounded-r-lg" : "rounded-l-lg"
+              } lg:rounded-l-lg`}
+              value={query}
+              onChange={handleSearchInputChange}
+              autoComplete="off"
+              autoCorrect="off"
+            />
+            <button
+              type="submit"
+              className="search-btn h-11 w-11 rounded-r-lg flex items-center justify-center"
+            >
+              <IoSearchOutline className="text-2xl search" />
+            </button>
+          </div>
+
           <div
-            className={`suggestionSection bg-gray-800 shadow-xl absolute top-[4.5rem] left-0 right-0 p-3 rounded-lg w-full max-h-[calc(100vh-10rem)] overflow-y-auto transition-transform duration-200 ${
+            className={`suggestionSection lg:shadow-xl absolute scroll-hide top-[2.74rem] lg:top-[4.5rem] left-0 lg:left-auto p-3 grid grid-cols-2 lg:grid-cols-3 gap-3 rounded-lg w-full max-h-[20rem] overflow-auto transition-transform duration-200 ${
               suggestions.length > 0
-                ? "visible opacity-100"
+                ? "visible opacity-100 left-1"
                 : "invisible opacity-0"
             }`}
           >
             {suggestions.map((suggestion, index) => (
               <div
                 key={index}
-                className="flex items-center gap-3 p-3 rounded cursor-pointer hover:bg-gray-700 transition"
+                className="flex items-center gap-3 p-3 rounded cursor-pointer hoover"
                 onClick={() => handleSuggestionClick(suggestion)}
               >
                 <img
                   src={suggestion.image}
                   alt=""
-                  className="h-12 w-12 rounded-full object-cover"
+                  className="h-[3rem] w-[3rem] rounded"
                 />
-                <div className="flex flex-col overflow-hidden text-white">
-                  <span className="text-sm font-semibold truncate">
+                <div className="flex flex-col overflow-hidden">
+                  <span className="text-sm truncate">
                     {he.decode(suggestion.name)}
                   </span>
-                  <span className="text-xs text-gray-400">
-                    {suggestion.type}
-                  </span>
+                  <span className="text-xs">{suggestion.type}</span>
                 </div>
               </div>
             ))}
           </div>
         </form>
-      </div>
-
-      {/* Main Navbar content */}
-      <div className="flex items-center justify-between w-full h-full lg:h-auto">
-        <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-          <img
-            src="https://raw.githubusercontent.com/tvtelugu/swara/refs/heads/main/public/swara.png"
-            alt="Swara Logo"
-            className="h-10 w-auto"
-          />
-          <span className="text-zinc-200 font-extrabold text-2xl lg:text-3xl">
-            Sɯαɾα™
-          </span>
-        </Link>
-        {/* Desktop links and search */}
-        <div className="hidden lg:flex items-center gap-6 flex-grow justify-center">
-          <div className="flex items-center space-x-6">
-            <Link
-              to="/Browse"
-              className="p-2 flex items-center space-x-2 text-zinc-400 font-semibold hover:text-zinc-100 transition-colors"
-            >
-              <MdOutlineExplore className="text-2xl" />
-              <h2 className="text-xl">Browse</h2>
-            </Link>
-            <Link
-              to="/Music"
-              className="p-2 flex items-center space-x-2 text-zinc-400 font-semibold hover:text-zinc-100 transition-colors"
-            >
-              <MdOutlineLibraryMusic className="text-2xl" />
-              <h2 className="text-xl">My Music</h2>
-            </Link>
-          </div>
-          <div className="relative flex-grow max-w-lg" ref={searchBarRef}>
-            <form onSubmit={handleSearchSubmit} className="relative w-full">
-              <input
-                type="text"
-                name="search"
-                id="search-desktop"
-                placeholder="Search for Songs, Artists, and Playlists"
-                className="w-full h-11 p-1 pl-5 pr-12 bg-gray-800 text-white rounded-full focus:outline-none placeholder-gray-400"
-                value={query}
-                onChange={handleSearchInputChange}
-                onFocus={() => setIsSearchActive(true)}
-                autoComplete="off"
-                autoCorrect="off"
-              />
-              <button
-                type="submit"
-                className="absolute right-0 top-0 h-full w-12 flex items-center justify-center text-white"
-              >
-                <IoSearchOutline className="text-2xl" />
-              </button>
-            </form>
-            <div
-              className={`suggestionSection bg-gray-800 shadow-xl absolute top-[3.5rem] left-0 p-3 grid grid-cols-2 lg:grid-cols-3 gap-3 rounded-lg w-full max-h-[20rem] overflow-y-auto transition-transform duration-200 ${
-                suggestions.length > 0 && isSearchActive
-                  ? "visible opacity-100"
-                  : "invisible opacity-0"
-              }`}
-            >
-              {suggestions.map((suggestion, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-3 p-3 rounded cursor-pointer hover:bg-gray-700 transition"
-                  onClick={() => handleSuggestionClick(suggestion)}
-                >
-                  <img
-                    src={suggestion.image}
-                    alt=""
-                    className="h-12 w-12 rounded-full object-cover"
-                  />
-                  <div className="flex flex-col overflow-hidden text-white">
-                    <span className="text-sm font-semibold truncate">
-                      {he.decode(suggestion.name)}
-                    </span>
-                    <span className="text-xs text-gray-400">
-                      {suggestion.type}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile icons and Theme Switch */}
-        <div className="flex items-center gap-4 flex-shrink-0">
-          <div className="flex lg:hidden items-center gap-4">
-            <Link
-              to="/Browse"
-              className="text-2xl text-white flex items-center justify-center p-2 rounded-full hover:bg-gray-700 transition"
-            >
-              <MdOutlineExplore />
-            </Link>
-            <Link
-              to="/Music"
-              className="text-2xl text-white flex items-center justify-center p-2 rounded-full hover:bg-gray-700 transition"
-            >
-              <MdOutlineLibraryMusic />
-            </Link>
-          </div>
-          <div className="hidden lg:block">
-            <Theme />
-          </div>
-          <button
-            onClick={() => setIsSearchActive(true)}
-            className="lg:hidden text-2xl text-white flex items-center justify-center p-2 rounded-full hover:bg-gray-700 transition"
-          >
-            <IoSearchOutline />
-          </button>
-        </div>
       </div>
     </nav>
   );
