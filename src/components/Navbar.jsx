@@ -183,7 +183,7 @@ const Navbar = () => {
   }, [isDesktopSearchVisible]);
 
   return (
-    <nav className="navbar fixed top-0 z-20 w-full px-4 py-1 lg:px-6 lg:py-1 flex items-center justify-between transition-all duration-300 ease-in-out" style={{ backgroundColor: 'rgba(17, 24, 39, 0.95)' }}>
+    <nav className="navbar fixed top-0 z-20 w-full px-4 py-1 lg:px-6 lg:py-1 flex items-center justify-between transition-all duration-300 ease-in-out" style={{ backgroundColor: 'transparent' }}>
       <div
         className={`flex items-center gap-2 transition-all duration-300 ease-in-out ${
           isSearchActive || isDesktopSearchVisible ? "opacity-0 invisible" : "opacity-100 visible"
