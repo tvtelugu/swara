@@ -18,7 +18,7 @@ const Footer = () => {
     <footer className="bg-gray-900 text-gray-400 py-8 px-4 lg:px-24">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
         {/* Top Artists section */}
-        <div className="mb-8 md:mb-0 w-full md:w-auto">
+        <div className="md:mb-0 w-full md:w-auto">
           <h4 className="text-white text-lg font-bold mb-4 text-center md:text-left">TOP ARTISTS</h4>
           {/* Using flexbox for a dynamic, wrapping layout on all screen sizes */}
           <ul className="flex flex-wrap justify-center md:justify-start gap-x-4 gap-y-2">
@@ -35,8 +35,8 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Footer info section */}
-        <div className="w-full text-center md:text-right md:w-auto">
+        {/* Footer info section - now always visible and centered */}
+        <div className="mt-8 md:mt-0 w-full text-center">
           <p className="text-sm">
             © 𝟐𝟎𝟐𝟒 || Sɯαɾα™ Made with ❤️ by{' '}
             <a
