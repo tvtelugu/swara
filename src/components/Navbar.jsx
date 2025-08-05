@@ -10,7 +10,7 @@ const Navbar = () => {
   const { playMusic } = useContext(MusicContext);
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
-  const [isSearchActive, setIsSearchActive] = useState(false); // New state to control search bar visibility
+  const [isSearchActive, setIsSearchActive] = useState(false);
   const navigate = useNavigate();
 
   let List = [];
@@ -97,7 +97,7 @@ const Navbar = () => {
     if (query.trim()) {
       navigate(`/search/${query}`);
       setSuggestions([]);
-      setIsSearchActive(false); // Close search bar on submit
+      setIsSearchActive(false);
     }
   };
 
@@ -139,12 +139,11 @@ const Navbar = () => {
 
     setQuery("");
     setSuggestions([]);
-    setIsSearchActive(false); // Close search bar on suggestion click
+    setIsSearchActive(false);
   };
 
   return (
     <nav className="navbar flex flex-col lg:gap-10 lg:flex-row lg:items-center top-0 z-20 fixed w-full pl-1 pr-1 lg:px-2 lg:h-[4.5rem]">
-      {/* Container for Logo, Navigation Links, and Theme Switch */}
       <div
         className={`flex items-center justify-between lg:w-auto h-[61px] w-screen gap-5 ${
           isSearchActive ? "hidden" : "flex"
@@ -167,17 +166,15 @@ const Navbar = () => {
         </Link>
         <div className="flex gap-4 items-center">
           <Theme />
-          {/* Mobile Search Button */}
           <button
             onClick={() => setIsSearchActive(true)}
-            className="lg:hidden text-2xl search-btn"
+            className="lg:hidden text-2xl flex items-center justify-center p-2 rounded-full search-btn"
           >
             <IoSearchOutline className="search" />
           </button>
         </div>
       </div>
       
-      {/* Desktop Navigation Links */}
       <div className="lg:flex gap-[2rem] w-[15rem] grey hidden font-semibold">
         <Link to="/Browse">
           <h2 className="lg:text-xl text-lg">Browse</h2>
@@ -187,7 +184,6 @@ const Navbar = () => {
         </Link>
       </div>
 
-      {/* Search bar section */}
       <div
         className={`flex-grow ${
           isSearchActive ? "flex" : "hidden"
@@ -195,14 +191,13 @@ const Navbar = () => {
       >
         <form
           onSubmit={handleSearchSubmit}
-          className="relative flex flex-grow items-center gap-2"
+          className="relative flex flex-grow items-center gap-2 w-full"
         >
           <div className="flex w-full items-center">
-            {/* Mobile close button */}
             <button
               type="button"
               onClick={() => setIsSearchActive(false)}
-              className="lg:hidden text-2xl search-btn w-11 h-11 flex items-center justify-center rounded-l-lg"
+              className="lg:hidden text-2xl w-11 h-11 flex items-center justify-center p-2 rounded-full search-btn"
             >
               <IoCloseOutline className="search" />
             </button>
