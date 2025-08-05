@@ -157,19 +157,29 @@ const Navbar = () => {
       setSuggestions([]);
     }
   };
+  
+  const closeDesktopSearch = () => {
+    setIsDesktopSearchVisible(false);
+    setQuery("");
+    setSuggestions([]);
+  }
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
-      if (searchInputRef.current && !searchInputRef.current.contains(event.target)) {
-        setIsDesktopSearchVisible(false);
-        setSuggestions([]);
+      if (
+        isDesktopSearchVisible &&
+        searchInputRef.current &&
+        !searchInputRef.current.contains(event.target) &&
+        !event.target.closest(".search-btn-desktop")
+      ) {
+        closeDesktopSearch();
       }
     };
-    document.addEventListener("click", handleOutsideClick);
+    document.addEventListener("mousedown", handleOutsideClick);
     return () => {
-      document.removeEventListener("click", handleOutsideClick);
+      document.removeEventListener("mousedown", handleOutsideClick);
     };
-  }, []);
+  }, [isDesktopSearchVisible]);
 
   return (
     <nav className="navbar fixed top-0 z-20 w-full px-4 py-2 lg:px-6 lg:py-3 flex items-center justify-between transition-all duration-300 ease-in-out">
@@ -317,9 +327,18 @@ const Navbar = () => {
             autoCorrect="off"
             ref={searchInputRef}
           />
+          {isDesktopSearchVisible && (
+            <button
+              type="button"
+              onClick={closeDesktopSearch}
+              className="search-btn-desktop absolute right-10 h-full w-10 rounded-r-full flex items-center justify-center"
+            >
+              <IoCloseOutline className="text-xl search" />
+            </button>
+          )}
           <button
             type="submit"
-            className="absolute right-0 h-full w-10 rounded-r-full flex items-center justify-center search-btn"
+            className={`search-btn absolute h-full w-10 rounded-r-full flex items-center justify-center ${isDesktopSearchVisible ? 'right-0' : 'right-10'}`}
           >
             <IoSearchOutline className="text-xl search" />
           </button>
