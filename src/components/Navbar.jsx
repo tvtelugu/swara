@@ -22,7 +22,10 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
-      if (searchBarRef.current && !searchBarRef.current.contains(event.target)) {
+      if (
+        searchBarRef.current &&
+        !searchBarRef.current.contains(event.target)
+      ) {
         setIsSearchActive(false);
         setSuggestions([]);
       }
@@ -202,7 +205,7 @@ const Navbar = () => {
           />
           <button
             type="submit"
-            className="bg-blue-600 h-11 w-11 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition"
+            className="search-btn-pink h-11 w-11 rounded-full flex items-center justify-center text-white hover:bg-pink-700 transition"
           >
             <IoSearchOutline className="text-2xl" />
           </button>
