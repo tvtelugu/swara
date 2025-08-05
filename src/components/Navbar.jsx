@@ -145,10 +145,10 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar flex flex-col lg:gap-10 lg:flex-row lg:items-center top-0 z-20 fixed w-full pl-1 pr-1 lg:px-2 lg:h-[4.5rem]">
+    <nav className="navbar flex flex-col lg:flex-row lg:items-center top-0 z-20 fixed w-full pl-1 pr-1 lg:px-2 lg:h-[4.5rem]">
       {/* Mobile & Desktop: Logo and Mobile Search Button */}
       <div
-        className={`flex items-center justify-between lg:w-auto h-[61px] w-screen gap-5 ${
+        className={`flex items-center justify-between lg:w-auto h-[61px] w-screen ${
           isSearchActive ? "hidden" : "flex"
         } lg:flex lg:basis-1/4`}
       >
@@ -246,7 +246,7 @@ const Navbar = () => {
       </div>
 
       {/* Desktop: Browse, My Music, and Theme Switch */}
-      <div className="hidden lg:flex items-center justify-end lg:basis-1/4 gap-5">
+      <div className="hidden lg:flex items-center justify-end lg:basis-1/4">
         <Link to="/Browse">
           <button className="flex items-center gap-2 p-2">
             <FaMusic className="text-xl" />
