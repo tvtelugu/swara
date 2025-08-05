@@ -167,8 +167,9 @@ const Navbar = () => {
             </span>
           </div>
         </Link>
-        <div className="flex gap-4 items-center">
-                   <button
+        <div className="flex gap-4 items-center lg:hidden">
+          <Theme />
+          <button
             onClick={() => setIsSearchActive(true)}
             className="lg:hidden text-2xl flex items-center justify-center p-2 rounded-full search-btn"
           >
