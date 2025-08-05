@@ -1,10 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useContext } from "react";
+import { useState, useContext, useRef } from "react";
 import { getArtistbyQuery, getSearchData, getSongbyQuery, getSuggestionSong } from "../../fetch";
 import MusicContext from "../context/MusicContext";
 import he from "he";
 import Theme from "../../theme";
-import { IoSearchOutline, IoCloseOutline } from "react-icons/io5";
+import { IoSearchOutline, IoCloseOutline, IoMusicalNotesOutline, IoBrowsersOutline } from "react-icons/io5";
 
 const Navbar = () => {
   const { playMusic } = useContext(MusicContext);
@@ -12,6 +12,8 @@ const Navbar = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const navigate = useNavigate();
+  const searchInputRef = useRef(null);
+  const [isDesktopSearchVisible, setIsDesktopSearchVisible] = useState(false);
 
   let List = [];
 
@@ -98,6 +100,7 @@ const Navbar = () => {
       navigate(`/search/${query}`);
       setSuggestions([]);
       setIsSearchActive(false);
+      setIsDesktopSearchVisible(false);
     }
   };
 
@@ -140,93 +143,117 @@ const Navbar = () => {
     setQuery("");
     setSuggestions([]);
     setIsSearchActive(false);
+    setIsDesktopSearchVisible(false);
+  };
+
+  const toggleDesktopSearch = () => {
+    setIsDesktopSearchVisible(!isDesktopSearchVisible);
+    if (!isDesktopSearchVisible) {
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 300);
+    } else {
+      setQuery("");
+      setSuggestions([]);
+    }
   };
 
   return (
-    <nav className="navbar flex flex-col lg:gap-10 lg:flex-row lg:items-center top-0 z-20 fixed w-full pl-1 pr-1 lg:px-2 lg:h-[4.5rem]">
+    <nav className="navbar fixed top-0 z-20 w-full px-4 py-3 lg:px-6 lg:py-4 flex items-center justify-between transition-all duration-300 ease-in-out">
       <div
-        className={`flex items-center justify-between lg:w-auto h-[61px] w-screen gap-5 ${
+        className={`flex items-center gap-4 transition-all duration-300 ease-in-out ${
           isSearchActive ? "hidden" : "flex"
         } lg:flex`}
       >
-        <Link to="/" className="flex items-center">
-          <div className="flex items-center">
-            <img
-              src="https://raw.githubusercontent.com/tvtelugu/swara/refs/heads/main/public/swara.png"
-              alt="Swara Logo"
-              className="h-10 w-auto mr-2"
-            />
-            <span className="Musi text-zinc-600 font-extrabold text-2xl lg:text-3xl">
-              Sɯαɾα
-            </span>
-            <span className="fy text-zinc-200 font-extrabold text-2xl lg:text-3xl">
-              ™
-            </span>
-          </div>
-        </Link>
-        <div className="flex gap-4 items-center">
-          <Theme />
-          <button
-            onClick={() => setIsSearchActive(true)}
-            className="lg:hidden text-2xl flex items-center justify-center p-2 rounded-full search-btn"
-          >
-            <IoSearchOutline className="search" />
-          </button>
-        </div>
-      </div>
-      
-      <div className="lg:flex gap-[2rem] w-[15rem] grey hidden font-semibold">
-        <Link to="/Browse">
-          <h2 className="lg:text-xl text-lg">Browse</h2>
-        </Link>
-        <Link to="/Music">
-          <h2 className="lg:text-xl text-lg ">My Music</h2>
+        <Link to="/" className="flex items-center gap-2">
+          <img
+            src="https://raw.githubusercontent.com/tvtelugu/swara/refs/heads/main/public/swara.png"
+            alt="Swara Logo"
+            className="h-10 w-auto"
+          />
+          <span className="text-zinc-600 font-extrabold text-2xl lg:text-3xl">
+            Sɯαɾα
+          </span>
+          <span className="text-zinc-200 font-extrabold text-2xl lg:text-3xl">
+            ™
+          </span>
         </Link>
       </div>
 
+      {/* Desktop Navigation Links and Theme Toggle */}
+      <div className="hidden lg:flex items-center gap-6 grey font-semibold ml-auto">
+        <Link to="/Browse" className="flex items-center gap-2 hoover p-2 rounded-full transition-colors duration-200">
+          <IoBrowsersOutline className="text-2xl" />
+          <h2 className="text-lg">Browse</h2>
+        </Link>
+        <Link to="/Music" className="flex items-center gap-2 hoover p-2 rounded-full transition-colors duration-200">
+          <IoMusicalNotesOutline className="text-2xl" />
+          <h2 className="text-lg">My Music</h2>
+        </Link>
+        <div className="search-btn p-2 rounded-full">
+          <Theme />
+        </div>
+        <button
+          onClick={toggleDesktopSearch}
+          className="search-btn p-2 rounded-full transition-colors duration-200"
+        >
+          <IoSearchOutline className="text-2xl search" />
+        </button>
+      </div>
+
+      {/* Mobile Search Button */}
+      <div className="flex items-center gap-4 lg:hidden">
+        <Theme />
+        <button
+          onClick={() => setIsSearchActive(true)}
+          className="search-btn p-2 rounded-full transition-colors duration-200"
+        >
+          <IoSearchOutline className="text-2xl search" />
+        </button>
+      </div>
+
+      {/* Mobile Search Bar */}
       <div
-        className={`flex-grow ${
-          isSearchActive ? "flex" : "hidden"
-        } lg:flex items-center`}
+        className={`fixed top-0 left-0 w-full h-full bg-transparent backdrop-blur-md z-30 transition-opacity duration-300 ease-in-out ${
+          isSearchActive ? "opacity-100 visible" : "opacity-0 invisible"
+        } lg:hidden`}
       >
         <form
           onSubmit={handleSearchSubmit}
-          className="relative flex flex-grow items-center gap-2 w-full"
+          className="relative flex items-center p-4"
         >
-          <div className="flex w-full items-center">
-            <button
-              type="button"
-              onClick={() => setIsSearchActive(false)}
-              className="lg:hidden text-2xl w-11 h-11 flex items-center justify-center p-2 rounded-full search-btn"
-            >
-              <IoCloseOutline className="search" />
-            </button>
-            <input
-              type="text"
-              name="search"
-              id="search"
-              placeholder="Search for Songs, Artists, and Playlists"
-              className={`flex-grow h-11 p-1 pl-5 bg-transparent focus:outline-none ${
-                isSearchActive ? "rounded-r-lg" : "rounded-l-lg"
-              } lg:rounded-l-lg`}
-              value={query}
-              onChange={handleSearchInputChange}
-              autoComplete="off"
-              autoCorrect="off"
-            />
-            <button
-              type="submit"
-              className="search-btn h-11 w-11 rounded-r-lg flex items-center justify-center"
-            >
-              <IoSearchOutline className="text-2xl search" />
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setIsSearchActive(false);
+              setSuggestions([]);
+            }}
+            className="search-btn p-2 rounded-full"
+          >
+            <IoCloseOutline className="text-2xl search" />
+          </button>
+          <input
+            type="text"
+            name="search"
+            id="search"
+            placeholder="Search for Songs, Artists, and Playlists"
+            className="flex-grow h-11 p-1 pl-4 bg-transparent focus:outline-none"
+            value={query}
+            onChange={handleSearchInputChange}
+            autoComplete="off"
+            autoCorrect="off"
+            ref={searchInputRef}
+          />
+          <button
+            type="submit"
+            className="search-btn h-11 w-11 rounded-full flex items-center justify-center ml-2"
+          >
+            <IoSearchOutline className="text-2xl search" />
+          </button>
 
           <div
-            className={`suggestionSection lg:shadow-xl absolute scroll-hide top-[2.74rem] lg:top-[4.5rem] left-0 lg:left-auto p-3 grid grid-cols-2 lg:grid-cols-3 gap-3 rounded-lg w-full max-h-[20rem] overflow-auto transition-transform duration-200 ${
-              suggestions.length > 0
-                ? "visible opacity-100 left-1"
-                : "invisible opacity-0"
+            className={`suggestionSection absolute top-[4rem] left-4 right-4 p-3 grid grid-cols-2 gap-3 rounded-lg max-h-[calc(100vh-10rem)] overflow-y-auto transition-all duration-200 ${
+              suggestions.length > 0 ? "opacity-100 visible" : "opacity-0 invisible"
             }`}
           >
             {suggestions.map((suggestion, index) => (
@@ -238,13 +265,72 @@ const Navbar = () => {
                 <img
                   src={suggestion.image}
                   alt=""
-                  className="h-[3rem] w-[3rem] rounded"
+                  className="h-12 w-12 rounded-lg object-cover"
                 />
                 <div className="flex flex-col overflow-hidden">
                   <span className="text-sm truncate">
                     {he.decode(suggestion.name)}
                   </span>
-                  <span className="text-xs">{suggestion.type}</span>
+                  <span className="text-xs text-zinc-500">
+                    {suggestion.type}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </form>
+      </div>
+
+      {/* Desktop Search Bar */}
+      <div
+        className={`hidden lg:flex absolute top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out ${
+          isDesktopSearchVisible
+            ? "left-1/2 -translate-x-1/2 opacity-100 visible w-2/5"
+            : "left-[80%] -translate-x-1/2 opacity-0 invisible w-0"
+        }`}
+      >
+        <form onSubmit={handleSearchSubmit} className="relative flex-grow flex items-center">
+          <input
+            type="text"
+            name="search"
+            id="search-desktop"
+            placeholder="Search for Songs, Artists, and Playlists"
+            className="flex-grow h-12 p-1 pl-6 pr-12 rounded-full focus:outline-none search-input"
+            value={query}
+            onChange={handleSearchInputChange}
+            autoComplete="off"
+            autoCorrect="off"
+            ref={searchInputRef}
+          />
+          <button
+            type="submit"
+            className="absolute right-0 h-full w-12 rounded-r-full flex items-center justify-center search-btn"
+          >
+            <IoSearchOutline className="text-2xl search" />
+          </button>
+          <div
+            className={`suggestionSection lg:shadow-xl absolute top-[3.5rem] left-0 right-0 p-3 grid grid-cols-3 gap-3 rounded-xl max-h-[20rem] overflow-y-auto transition-transform duration-200 z-50 ${
+              suggestions.length > 0 ? "visible opacity-100" : "invisible opacity-0"
+            }`}
+          >
+            {suggestions.map((suggestion, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-3 p-3 rounded-lg cursor-pointer hoover"
+                onClick={() => handleSuggestionClick(suggestion)}
+              >
+                <img
+                  src={suggestion.image}
+                  alt=""
+                  className="h-14 w-14 rounded-xl object-cover"
+                />
+                <div className="flex flex-col overflow-hidden">
+                  <span className="text-sm truncate">
+                    {he.decode(suggestion.name)}
+                  </span>
+                  <span className="text-xs text-zinc-500">
+                    {suggestion.type}
+                  </span>
                 </div>
               </div>
             ))}
